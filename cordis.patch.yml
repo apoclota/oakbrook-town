@@ -1,0 +1,14 @@
+# 橡溪镇主角生活线
+- insert:
+    - id: town-life
+      name: 'dsh-town-life'
+      config:
+        enabled: true
+        eventMode: 'daily'
+        allowFreeActions: true
+        weatherCity: '成都'
+        townScale: 'expanded'
+        showNpcDetails: true
+        showDecorDetails: true
+        mapRefreshSeconds: 2
+        defaultDecorRoom: '小书桌与日记本'

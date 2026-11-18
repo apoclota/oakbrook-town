@@ -1,0 +1,6 @@
+node_modules/
+*.log
+.town-state.json
+town-life.json
+_town-script.js
+.DS_Store

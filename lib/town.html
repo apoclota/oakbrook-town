@@ -1,0 +1,796 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>橡溪镇 · 生活地图</title>
+<style>
+*{box-sizing:border-box}body{margin:0;color:#293d34;background:#f3efe5;font:15px/1.6 "Microsoft YaHei",sans-serif}main{max-width:1640px;margin:auto;padding:20px clamp(14px,3vw,52px)}header,footer,.row,.toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px}header{border-bottom:1px solid #c9c7b7;padding-bottom:12px}small{color:#5c6d60}h1,h2,h3{font-family:Georgia,"SimSun",serif;margin:.18em 0}h1{font-size:clamp(32px,4vw,52px);letter-spacing:.09em}h3{font-size:16px;margin-top:14px}article{display:grid;grid-template-columns:minmax(0,1fr) clamp(250px,23vw,355px);gap:16px;margin:18px 0;align-items:start}button{font:inherit;color:inherit;cursor:pointer;background:#fcf9ee;border:1px solid #c3c4b0;padding:6px 10px;border-radius:9px}button:hover,button:focus-visible{outline:2px solid #9d7850;outline-offset:1px}button:disabled{opacity:.6}.primary{background:#36594c;color:white}.map,aside{border:1px solid #c6c4af;border-radius:16px;overflow:hidden;background:#fffaf0}.viewport{overflow:auto;max-height:73vh;background:#ddceb3;cursor:grab}.land{position:relative;min-width:770px}.land>img{width:100%;height:auto;display:block;pointer-events:none}.hit{position:absolute;transform:translate(-50%,-100%);width:13%;height:22%;border:0;background:transparent;border-radius:25%}.hit span{position:absolute;left:50%;bottom:0;transform:translateX(-50%);background:#fff7e4ed;color:#403e30;padding:2px 8px;border:1px solid #aa9772;border-radius:16px;white-space:nowrap;font-size:12px}.hit[aria-pressed=true] span{background:#305648;color:white}.traveler{position:absolute;transform:translate(-50%,-100%);pointer-events:none;z-index:3}.traveler img,.fish-avatar img{display:block;width:40px;height:40px;object-fit:cover;border-radius:50%;border:3px solid #fff6d8;box-shadow:0 2px 8px #3d403475}.traveler:after{content:"";position:absolute;left:16px;border:5px solid transparent;border-top-color:#fff6d8}.toolbar{padding:9px 14px;flex-wrap:wrap}.toolbar input{width:86px;vertical-align:middle;accent-color:#44674f}aside{padding:18px;max-height:81vh;overflow:auto}aside p{margin:5px 0 12px}.choices,.row{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.row{padding:5px 0;border-bottom:1px solid #e4dfd1}.choices button,.row button{font-size:13px}footer{flex-wrap:wrap;border-top:1px solid #c9c7b7;padding-top:12px}footer>div:first-child{display:grid;grid-template-columns:auto 1fr;column-gap:8px}.fish-avatar{grid-row:1/3}#notice{position:sticky;bottom:0;background:#fff5d9;color:#764c2f;border-radius:8px;padding:6px}#notice:empty{display:none}#room{background:radial-gradient(ellipse at center,#fdf6e7,#dbccae);text-align:center;padding:8px}#room[hidden],.viewport[hidden],label[hidden]{display:none}#stage{position:relative;margin:auto;width:min(100%,65vh);aspect-ratio:1;background-size:cover;border-radius:8px;overflow:hidden}.prop,.furniture,.person{position:absolute;transform:translate(-50%,-50%);background:#fff9ebeb;font-size:12px;box-shadow:0 2px 5px #30291942}.prop{border-radius:20px;padding:3px 7px}.furniture{background:none;border:0;border-radius:0;box-shadow:none;filter:drop-shadow(0 2px 3px rgba(60,44,22,.28))}.person{border-radius:50%;padding:1px}.person img{width:32px;height:32px;border-radius:50%;display:block}#object-panel{min-height:2.4em;padding:5px}#object-panel button{margin-left:6px}#stats,#activity{color:#536659}#sync{display:block} @media(max-width:850px){article{grid-template-columns:1fr}aside{max-height:none}.viewport{max-height:62vh}.toolbar{padding:7px}.hit span{font-size:11px}main{padding:12px}h1{font-size:34px}}
+.route{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}.route polyline{fill:none;stroke:#265f55;stroke-width:.65;stroke-dasharray:1.15 .85;stroke-linecap:round;filter:drop-shadow(0 0 .3px white)} #back[hidden]{display:none}
+.plan-box{margin:6px 0 2px;border:1px solid #e5dcc7;border-radius:10px;padding:8px 10px;background:#fffdf6}
+.plan-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:4px}
+.plan-head b{font-size:13px;color:#4a3d27}
+.plan-head span{font-size:11px;color:#94876d}
+.plan-list{display:flex;flex-direction:column;gap:2px;max-height:132px;overflow:auto}
+.plan-row{display:grid;grid-template-columns:44px 96px 1fr;gap:6px;font-size:12px;color:#7b6d55;padding:1px 0}
+.plan-row.cur{color:#2f5d3a;font-weight:600}
+.plan-row.passed{opacity:.45}
+
+.furniture{background:none;border:0;padding:0;cursor:grab;filter:drop-shadow(0 6px 5px rgba(90,70,40,.28));transition:filter .15s}
+.furniture .furnimg{position:relative;width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center}
+.furniture .fshadow{position:absolute;left:16%;right:16%;bottom:-1%;height:12%;background:radial-gradient(ellipse at center,rgba(60,44,22,.22),rgba(60,44,22,0) 72%);border-radius:50%;z-index:0}
+.furniture .furnimg>.sprite{position:relative;z-index:1}
+.furniture .furnimg .sprite{width:100%!important;height:100%!important}
+.furniture .furnimg img,.furniture .furnimg svg{width:100%;height:100%;object-fit:contain;display:block}
+.furniture:hover{filter:drop-shadow(0 9px 8px rgba(90,70,40,.4))}
+.daily-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.daily-head h3{margin:14px 0 6px}
+.task-row{display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:8px;align-items:center;padding:6px 0;border-bottom:1px dashed #ddd2bd}
+.task-row.done{opacity:.55}
+.task-info{display:flex;flex-direction:column;gap:2px;min-width:0}
+.task-info b{font-size:13px}
+.task-info small{color:#7d6f5b;font-size:11px;line-height:1.35}
+.task-tag{font-size:11px;color:#6c7f5a}
+button.ghost{background:none;border:1px solid #cbbfa6;color:#6f5f45}
+.sprite{display:block;line-height:0;pointer-events:none}
+.sprite svg{width:100%;height:100%;display:block}
+.furniture{position:absolute;transform:translate(-50%,-50%);padding:0;border:0;background:transparent;border-radius:8px;cursor:grab}
+.furniture.sel{outline:2px dashed #9d7850;outline-offset:3px}
+.thumb{flex:0 0 auto;line-height:0}
+.goods-row{display:flex;align-items:center;gap:8px;margin:5px 0}
+.goods-row .sprite{width:30px;height:30px}
+.goods-row button{flex:1;min-width:0;text-align:left;white-space:normal;line-height:1.3;padding:6px 8px}
+.goods-row button .price{color:#7d8a7c;font-size:12px}
+.furniture .sprite{filter:drop-shadow(0 3px 3px rgba(40,32,20,.28))}
+.furniture .sprite img{filter:none}
+.hearts{color:#b4655f;letter-spacing:2px;font-size:12px}
+.affinity{display:flex;gap:6px;align-items:center;font-size:12px;color:#5c6d60}
+.affinity .bar{flex:1;min-width:46px;height:6px;background:#e3dbc8;border-radius:4px;overflow:hidden}
+.affinity .bar>i{display:block;height:100%;background:#9d7850}
+.npc-tag{display:flex;flex-direction:column;align-items:center;gap:2px}
+.npc-tag .hearts{font-size:11px}
+
+.scenemissing{position:absolute;left:14px;right:14px;bottom:14px;padding:10px 12px;border-radius:10px;background:#00000055;color:#fff8ea;font-size:12px;line-height:1.5;backdrop-filter:blur(2px)}
+#stage.plan{background:#f3ecd9;display:block;padding:0}
+#stage.plan svg.plan{display:block;width:100%;height:100%}
+.comfort{margin:8px 0 10px;padding:8px 10px;border:1px solid #e0d6c0;border-radius:10px;background:#fbf7ee}
+.comfort-head{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:#3f4a42}
+.comfort-head b{font-size:15px}
+.comfort .bar{display:block;height:7px;background:#e7dfcb;border-radius:5px;overflow:hidden;margin:6px 0 4px}
+.comfort .bar>i{display:block;height:100%;background:#b08a58}
+.room-tabs{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 8px}
+.room-tabs button{font-size:12px;padding:4px 9px}
+.room-tabs button.on{background:#e8dcc0;border-color:#b09b74;font-weight:600}
+.furn-row{display:grid;grid-template-columns:26px minmax(0,1fr) auto auto;gap:6px;align-items:center;margin:5px 0;font-size:12px}
+.furn-row .sprite{width:26px;height:26px}
+.furn-row .name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.25}
+.furn-row button{padding:3px 7px;font-size:12px;white-space:nowrap;margin:0}
+.furn-row.owned{grid-template-columns:26px minmax(0,1fr) auto}
+.person.visitor .face{width:100%;height:100%;display:grid;place-items:center;border-radius:50%;background:#f2ddbf;color:#7a5b34;font-size:13px;font-weight:700;border:2px solid #c9a97c;box-sizing:border-box}
+#stage.plan .furniture{cursor:grab}
+#stage.plan .furniture:hover{filter:brightness(1.06) drop-shadow(0 4px 5px rgba(40,32,20,.25))}
+
+.status-strip{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 8px;font-size:13px;color:#4a4034}
+.meter{display:inline-flex;align-items:center;gap:5px}
+.meter .bar{display:inline-block;width:52px;height:6px;border-radius:3px;background:#e5dcc8;overflow:hidden}
+.meter .bar i{display:block;height:100%;background:#7f9c6a;border-radius:3px}
+.meter.mood .bar i{background:#d99a6c}
+.activity{margin:6px 0;padding:8px 10px;border-radius:10px;background:#f6eeda;border:1px solid #e0d3b6}
+.activity .bar{margin:5px 0;height:6px;border-radius:3px;background:#e5dcc8;overflow:hidden}
+.activity .bar i{display:block;height:100%;background:#c08a4a}
+.job-row{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:8px;align-items:center;padding:4px 0;border-bottom:1px dashed #e6ddc9}
+.plot{position:absolute;transform:translate(-50%,-50%);border-radius:8px;padding:2px;background:transparent;border:none;cursor:pointer}
+.plot.ready{box-shadow:0 0 0 2px #d9a53b inset}
+
+.goods-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.goods-row span{min-width:0}
+.goods-row button{white-space:nowrap;flex:0 0 auto;padding:4px 10px}
+.job-row button{padding:5px 12px}
+
+.shelf{position:absolute;left:6px;right:6px;bottom:6px;z-index:6;background:linear-gradient(#6b4a2e,#412c1c);border-radius:10px;padding:4px 6px 5px;box-shadow:0 8px 22px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,228,190,.25);color:#f8ecd8}
+.shelf.closed{filter:saturate(.55) brightness(.82)}
+.shelf-head{display:flex;justify-content:space-between;align-items:center;font-size:12px;letter-spacing:.04em;margin-bottom:5px;opacity:.96}
+.shelf-head small{font-size:10px;opacity:.8}
+.shelf-body{display:flex;flex-direction:column;gap:2px}
+.shelf-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3px;padding:1px 1px 3px;border-bottom:2px solid #b98a55;box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.shelf-row:last-of-type{border-bottom:0}
+.cell{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:0;background:rgba(255,255,255,.07);border:1px solid rgba(255,236,205,.16);border-radius:6px;padding:1px;cursor:pointer;color:#fdf3e2;font:inherit;min-height:50px;overflow:hidden}
+.cell:hover:not(.empty){background:rgba(255,240,210,.2);border-color:rgba(255,236,205,.5)}
+.cell small{font-size:9px;line-height:1.05;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cell b{font-size:9px;color:#ffd98a}
+.cell.empty{opacity:.3;cursor:default;border-style:dashed}
+.cell.shut{opacity:.55}
+.shelf-foot{display:flex;justify-content:center;align-items:center;gap:8px;font-size:11px;margin-top:4px}
+.card-head{display:flex;gap:10px;align-items:center;margin-bottom:6px}
+.card-meta{display:flex;flex-direction:column;gap:2px}
+.card-meta small{opacity:.8}
+.tv-list{display:flex;flex-direction:column;gap:6px;margin:6px 0}
+.tv-card{display:flex;flex-direction:column;gap:3px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:6px 8px;color:inherit}
+.tv-card b{font-size:12px;line-height:1.25}
+.tv-card small{font-size:10px;opacity:.8}
+</style><main><header><div><small>月镜湖畔 ／ 生活地图</small><h1>橡溪镇</h1></div><div><small id="sync" role="status">连接中</small></div></header>
+<article><section class="map" aria-label="小镇地图"><div class="viewport" id="viewport"><div class="land" id="land"><img width="1536" height="1024" alt="沿月镜湖展开的立体小镇，湖边木屋、商业街与南侧铁路相连"><div id="pins" aria-label="小镇与她位置"></div></div></div><section id="room" hidden><div id="stage"></div><div id="object-panel" aria-live="polite"></div></section><div class="toolbar"><button id="back" hidden>返回街区</button><label id="zoom-label">地图缩放 <input id="zoom" type="range" min="100" max="200" step="25" value="100"></label><button id="locate">定位她</button></div></section>
+<aside><small>地点手册</small><div id="details"></div><p id="notice" role="status"></p></aside></article><footer><div><small>居民动态</small><h2 id="resident">她</h2><small id="map-help"></small></div><div id="stats"></div></footer><p id="activity"></p></main>
+<script>
+const $=id=>document.getElementById(id)
+// Entries follow the physical doors, listed by street and interior atlas cell.
+const streets=[
+ ['fish-home','moonlake-park','oakbrook-flower','oakbrook-bakery'],
+ ['oakbrook-post','oakbrook-library','oakbrook-restaurant','oakbrook-market','oakbrook-pharmacy'],
+ ['oakbrook-workshop','oakbrook-hardware','oakbrook-clothing','lucky-star','oakbrook-station','oakbrook-furniture']
+]
+const doorX=[[19,42,64,86],[12,30,49,67,84],[8,24,41,57,73,89]]
+const coords={},cells={},blocks={}
+streets.forEach((street,r)=>street.forEach((id,c)=>{coords[id]=[doorX[r][c],[28,59,90][r]];cells[id]=streets.flat().indexOf(id);blocks[id]=r}))
+const avatarFallback='data:image/webp;base64,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'
+const places=['湖岸街','中央商街','工坊与站前街']
+function route(from,to){
+ const a=coords[from],b=coords[to];if(!a||!b)return []
+ const r=blocks[from],s=blocks[to];if(r===s)return [a,b]
+ const lanes=[[[95,28],[97,44],[95,59]],[[37,59],[37,74],[37,90]]]
+ const path=[a]
+ if(r<s){for(let k=r;k<s;k++)path.push(...lanes[k])}
+ else {for(let k=r-1;k>=s;k--)path.push(...lanes[k].slice().reverse())}
+ return [...path,b]
+}
+function along(path,t){
+ if(!path.length)return null
+ const lengths=path.slice(1).map((b,i)=>Math.hypot((b[0]-path[i][0])*1.5,b[1]-path[i][1]))
+ let remaining=Math.min(1,Math.max(0,t))*lengths.reduce((a,b)=>a+b,0)
+ for(let i=0;i<lengths.length;i++){if(remaining<=lengths[i]&&lengths[i]){let f=remaining/lengths[i];return path[i].map((a,k)=>a+f*(path[i+1][k]-a))}remaining-=lengths[i]}
+ return path.at(-1)
+}
+const activities={
+ 'oakbrook-pharmacy':['查看健康提醒','询问常用护理用品','整理急救包'],
+ 'oakbrook-bakery':['看看今日出炉面包','坐下来喝咖啡','帮忙装一袋点心'],
+ 'oakbrook-hardware':['查看工具墙','挑选木屋材料','询问修缮建议'],
+ 'oakbrook-clothing':['看看换季衣物','试戴湖蓝围巾','挑选布艺小物'],
+ 'oakbrook-flower':['闻闻今日鲜花','挑选盆栽','看看花种子'],
+ 'oakbrook-library':['查看小镇档案','在窗边阅读','寻找湖区旅行书'],
+ 'oakbrook-workshop':['看看家具样品','询问房屋升级','在修理角帮忙'],
+ 'oakbrook-post':['查看公告栏','取一个包裹','挑选湖景明信片'],
+ 'fish-home':['在小屋写日记','去码头整理渔具','给窗边的花浇水'],
+ 'moonlake-park':['沿湖岸散步','在长椅上听鸟鸣','画一张湖畔速写'],
+ 'oakbrook-station':['查看站台时刻表','在月台看列车进站','在候车亭读书'],
+ 'oakbrook-restaurant':['坐下看今日菜单','在靠窗的桌边喝茶','向厨师请教热汤做法'],
+ 'oakbrook-market':['逛货架','挑选手账纸样','看看花箱里的新苗'],
+ 'lucky-star':['查看店内公告','翻看往期纪念票','欣赏橱窗里的手绘海报']
+}
+let state,selected,busy=false,revision=0,roomOpen=false,dragging=false,inspected=null
+function el(tag,text=''){const n=document.createElement(tag);n.textContent=text;return n}
+function button(text,fn){const b=el('button',text);b.onclick=fn;return b}
+function avatar(){const img=document.createElement('img');img.src=state.avatar?.imageUrl||avatarFallback;img.alt='她';img.onerror=()=>{img.onerror=null;img.src=avatarFallback};return img}
+function select(id,open=false){selected=id;roomOpen=open;inspected=null;$('notice').textContent='';draw()}
+function position(n,x,y){n.style.left=x+'%';n.style.top=y+'%'}
+function zoom(value){$('zoom').value=value;$('land').style.width=$('zoom').value+'%';$('land').style.minWidth=(770*Number($('zoom').value)/100)+'px'}
+$('zoom').oninput=e=>zoom(e.target.value)
+$('back').onclick=()=>select(selected)
+$('locate').onclick=()=>{if(state){select(state.travel?.inProgress?.to||state.location?.id);$('pins').querySelector('.traveler')?.scrollIntoView({block:'nearest',inline:'center'})}}
+const sceneRoot='http://127.0.0.1:18764/scenes/'
+const missingScenes=new Set()
+const spriteRoot=sceneRoot.replace(/scenes\/$/,'sprites/')
+const PAL={w:'#b5804f',w2:'#8d5c34',c:'#f6ead4',c2:'#e2cfae',g:'#9dbfae',g2:'#6d9282',b:'#89aecb',b2:'#5e86a6',p:'#e3a8a8',y:'#e2b95e',l:'#6f9b5c',l2:'#4d7544',i:'#3b3833',f:'#fdf9f2',r:'#cf7b6a'}
+const MODELS={
+ sofa:{w:110,h:66,svg:'<svg viewBox="0 0 100 60"><rect x="4" y="26" width="92" height="26" rx="7" fill="#9dbfae"/><rect x="4" y="13" width="92" height="18" rx="7" fill="#6d9282"/><rect x="10" y="31" width="34" height="12" rx="4" fill="#f6ead4"/><rect x="56" y="31" width="34" height="12" rx="4" fill="#f6ead4"/><rect x="8" y="51" width="6" height="7" fill="#8d5c34"/><rect x="86" y="51" width="6" height="7" fill="#8d5c34"/></svg>'},
+ armchair:{w:76,h:76,svg:'<svg viewBox="0 0 100 100"><rect x="20" y="44" width="60" height="34" rx="10" fill="#e3a8a8"/><rect x="20" y="20" width="60" height="30" rx="12" fill="#cf7b6a"/><rect x="8" y="50" width="12" height="26" rx="6" fill="#cf7b6a"/><rect x="80" y="50" width="12" height="26" rx="6" fill="#cf7b6a"/><rect x="26" y="78" width="8" height="10" fill="#8d5c34"/><rect x="66" y="78" width="8" height="10" fill="#8d5c34"/></svg>'},
+ table:{w:110,h:80,svg:'<svg viewBox="0 0 100 74"><rect x="4" y="18" width="92" height="12" rx="4" fill="#b5804f"/><rect x="14" y="30" width="8" height="36" fill="#8d5c34"/><rect x="78" y="30" width="8" height="36" fill="#8d5c34"/><rect x="22" y="66" width="56" height="6" rx="3" fill="#8d5c34"/></svg>'},
+ lowtable:{w:96,h:60,svg:'<svg viewBox="0 0 100 62"><rect x="4" y="20" width="92" height="12" rx="4" fill="#c98f5c"/><rect x="12" y="32" width="7" height="24" fill="#8d5c34"/><rect x="81" y="32" width="7" height="24" fill="#8d5c34"/><rect x="26" y="46" width="48" height="5" rx="2" fill="#8d5c34"/></svg>'},
+ stool:{w:48,h:48,svg:'<svg viewBox="0 0 100 100"><ellipse cx="50" cy="30" rx="34" ry="14" fill="#d1a06a"/><rect x="16" y="30" width="68" height="10" fill="#b5804f"/><rect x="24" y="40" width="8" height="42" fill="#8d5c34"/><rect x="68" y="40" width="8" height="42" fill="#8d5c34"/><rect x="30" y="58" width="40" height="6" fill="#8d5c34"/></svg>'},
+ desk:{w:110,h:72,svg:'<svg viewBox="0 0 100 66"><rect x="2" y="16" width="96" height="11" rx="3" fill="#b5804f"/><rect x="6" y="27" width="40" height="26" rx="3" fill="#c98f5c"/><rect x="14" y="33" width="24" height="4" rx="2" fill="#8d5c34"/><rect x="14" y="41" width="24" height="4" rx="2" fill="#8d5c34"/><rect x="52" y="27" width="8" height="32" fill="#8d5c34"/><rect x="88" y="27" width="8" height="32" fill="#8d5c34"/><rect x="20" y="10" width="22" height="6" rx="2" fill="#e2cfae"/></svg>'},
+ bookshelf:{w:76,h:120,svg:'<svg viewBox="0 0 100 158"><rect x="6" y="4" width="88" height="150" rx="5" fill="#8d5c34"/><rect x="12" y="10" width="76" height="30" fill="#f6ead4"/><rect x="16" y="14" width="8" height="24" fill="#cf7b6a"/><rect x="27" y="16" width="8" height="22" fill="#89aecb"/><rect x="38" y="14" width="7" height="24" fill="#6f9b5c"/><rect x="48" y="18" width="9" height="20" fill="#e2b95e"/><rect x="60" y="14" width="7" height="24" fill="#6d9282"/><rect x="12" y="48" width="76" height="30" fill="#f6ead4"/><rect x="16" y="52" width="9" height="24" fill="#89aecb"/><rect x="28" y="54" width="8" height="22" fill="#e3a8a8"/><rect x="40" y="52" width="7" height="24" fill="#6f9b5c"/><rect x="12" y="86" width="76" height="30" fill="#f6ead4"/><rect x="16" y="90" width="8" height="24" fill="#e2b95e"/><rect x="27" y="92" width="9" height="22" fill="#6d9282"/><rect x="12" y="124" width="76" height="26" fill="#f6ead4"/><rect x="16" y="128" width="8" height="20" fill="#cf7b6a"/><rect x="27" y="130" width="8" height="18" fill="#6f9b5c"/></svg>'},
+ shelf:{w:88,h:44,svg:'<svg viewBox="0 0 100 50"><rect x="4" y="26" width="92" height="8" rx="3" fill="#b5804f"/><rect x="12" y="34" width="6" height="10" fill="#8d5c34"/><rect x="82" y="34" width="6" height="10" fill="#8d5c34"/><rect x="18" y="10" width="10" height="16" rx="2" fill="#cf7b6a"/><rect x="32" y="12" width="9" height="14" rx="2" fill="#89aecb"/><rect x="46" y="8" width="8" height="18" rx="2" fill="#6f9b5c"/><rect x="58" y="12" width="11" height="14" rx="2" fill="#e2b95e"/></svg>'},
+ bed:{w:130,h:86,svg:'<svg viewBox="0 0 100 66"><rect x="2" y="34" width="96" height="24" rx="5" fill="#b5804f"/><rect x="6" y="16" width="24" height="20" rx="6" fill="#f6ead4"/><rect x="2" y="10" width="96" height="8" rx="4" fill="#8d5c34"/><rect x="32" y="34" width="64" height="14" rx="6" fill="#9dbfae"/><rect x="34" y="20" width="60" height="16" rx="7" fill="#f6ead4"/><rect x="4" y="58" width="6" height="7" fill="#8d5c34"/><rect x="90" y="58" width="6" height="7" fill="#8d5c34"/></svg>'},
+ cabinet:{w:96,h:70,svg:'<svg viewBox="0 0 100 74"><rect x="8" y="6" width="84" height="60" rx="4" fill="#c98f5c"/><rect x="14" y="12" width="34" height="48" rx="2" fill="#e2cfae"/><rect x="52" y="12" width="34" height="48" rx="2" fill="#e2cfae"/><circle cx="44" cy="36" r="2.5" fill="#8d5c34"/><circle cx="56" cy="36" r="2.5" fill="#8d5c34"/><rect x="12" y="66" width="8" height="8" fill="#8d5c34"/><rect x="80" y="66" width="8" height="8" fill="#8d5c34"/></svg>'},
+ wardrobe:{w:84,h:126,svg:'<svg viewBox="0 0 100 150"><rect x="10" y="4" width="80" height="140" rx="4" fill="#8d5c34"/><rect x="16" y="10" width="32" height="128" fill="#c98f5c"/><rect x="52" y="10" width="32" height="128" fill="#c98f5c"/><circle cx="44" cy="74" r="3" fill="#e2b95e"/><circle cx="56" cy="74" r="3" fill="#e2b95e"/><rect x="16" y="132" width="68" height="6" fill="#b5804f"/></svg>'},
+ rug:{w:120,h:64,svg:'<svg viewBox="0 0 100 54"><ellipse cx="50" cy="27" rx="47" ry="24" fill="#e3a8a8"/><ellipse cx="50" cy="27" rx="36" ry="17" fill="#f6ead4"/><ellipse cx="50" cy="27" rx="22" ry="9" fill="#e3a8a8"/></svg>'},
+ mirror:{w:56,h:104,svg:'<svg viewBox="0 0 100 186"><rect x="8" y="4" width="84" height="178" rx="42" fill="#8d5c34"/><ellipse cx="50" cy="93" rx="33" ry="77" fill="#cfe3ee"/><path d="M28 60 L52 42 L44 78 Z" fill="#ffffff" opacity=".6"/></svg>'},
+ painting:{w:78,h:58,svg:'<svg viewBox="0 0 100 74"><rect x="4" y="4" width="92" height="66" rx="3" fill="#8d5c34"/><rect x="12" y="12" width="76" height="50" fill="#cfe3ee"/><circle cx="72" cy="26" r="9" fill="#e2b95e"/><path d="M12 62 L40 30 L58 50 L72 38 L88 62 Z" fill="#6f9b5c"/></svg>'},
+ clock:{w:48,h:48,svg:'<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="#e2b95e"/><circle cx="50" cy="50" r="34" fill="#fdf9f2"/><rect x="48" y="26" width="4" height="26" rx="2" fill="#3b3833"/><rect x="50" y="48" width="20" height="4" rx="2" fill="#3b3833"/><circle cx="50" cy="50" r="3" fill="#cf7b6a"/></svg>'},
+ 'floor-lamp':{w:46,h:104,svg:'<svg viewBox="0 0 100 226"><path d="M22 70 L78 70 L66 8 L34 8 Z" fill="#e2b95e"/><rect x="46" y="70" width="8" height="130" fill="#8d5c34"/><ellipse cx="50" cy="206" rx="30" ry="10" fill="#8d5c34"/><ellipse cx="50" cy="70" rx="28" ry="6" fill="#fdf9f2" opacity=".7"/></svg>'},
+ lamp:{w:42,h:56,svg:'<svg viewBox="0 0 100 132"><path d="M20 56 L80 56 L68 6 L32 6 Z" fill="#e2b95e"/><rect x="46" y="56" width="8" height="52" fill="#8d5c34"/><ellipse cx="50" cy="114" rx="28" ry="8" fill="#8d5c34"/></svg>'},
+ plant:{w:48,h:64,svg:'<svg viewBox="0 0 100 132"><path d="M30 78 L70 78 L64 126 L36 126 Z" fill="#c98f5c"/><path d="M50 78 C50 40 30 30 22 18 C44 22 50 46 50 78Z" fill="#6f9b5c"/><path d="M50 78 C50 34 72 26 80 12 C72 44 58 56 50 78Z" fill="#4d7544"/><path d="M50 78 C50 44 54 30 50 8 C42 32 46 56 50 78Z" fill="#6f9b5c"/></svg>'},
+ vase:{w:36,h:56,svg:'<svg viewBox="0 0 100 156"><path d="M34 70 C24 96 26 132 50 150 C74 132 76 96 66 70 Z" fill="#89aecb"/><rect x="38" y="62" width="24" height="10" rx="3" fill="#5e86a6"/><path d="M50 62 L50 26" stroke="#4d7544" stroke-width="4"/><circle cx="42" cy="22" r="9" fill="#e3a8a8"/><circle cx="58" cy="16" r="8" fill="#e2b95e"/><circle cx="58" cy="34" r="7" fill="#cf7b6a"/></svg>'},
+ hanging:{w:44,h:66,svg:'<svg viewBox="0 0 100 150"><path d="M20 6 L80 6" stroke="#8d5c34" stroke-width="5"/><path d="M30 6 L50 44 M70 6 L50 44" stroke="#8d5c34" stroke-width="3"/><circle cx="50" cy="70" r="26" fill="#c98f5c"/><path d="M30 62 C14 80 20 108 34 118 C34 96 30 78 30 62Z" fill="#6f9b5c"/><path d="M70 62 C86 80 80 108 66 118 C66 96 70 78 70 62Z" fill="#4d7544"/><path d="M50 44 C44 70 44 96 50 118 C56 96 56 70 50 44Z" fill="#6f9b5c"/></svg>'},
+ flowers:{w:40,h:56,svg:'<svg viewBox="0 0 100 140"><path d="M42 60 L58 60 L62 134 L38 134 Z" fill="#cfe3ee"/><circle cx="34" cy="42" r="13" fill="#e3a8a8"/><circle cx="62" cy="34" r="14" fill="#e2b95e"/><circle cx="50" cy="56" r="12" fill="#cf7b6a"/><circle cx="70" cy="58" r="10" fill="#89aecb"/><path d="M34 60 L38 86 M62 56 L58 90 M50 70 L50 96" stroke="#4d7544" stroke-width="4"/></svg>'},
+ candle:{w:28,h:40,svg:'<svg viewBox="0 0 100 142"><rect x="30" y="54" width="40" height="80" rx="6" fill="#f6ead4"/><ellipse cx="50" cy="54" rx="20" ry="6" fill="#e2cfae"/><path d="M50 54 C50 38 58 32 50 16 C42 32 46 44 50 54Z" fill="#e2b95e"/><path d="M50 50 C52 40 50 34 50 26 C48 36 48 44 50 50Z" fill="#fdf9f2"/></svg>'},
+ curtain:{w:78,h:92,svg:'<svg viewBox="0 0 100 118"><rect x="2" y="4" width="96" height="6" rx="3" fill="#8d5c34"/><path d="M10 10 L40 10 L34 114 L8 114 Z" fill="#cfe3ee"/><path d="M60 10 L90 10 L92 114 L66 114 Z" fill="#cfe3ee"/><path d="M18 10 L26 10 L22 114 L16 114 Z" fill="#89aecb" opacity=".6"/><path d="M70 10 L78 10 L80 114 L74 114 Z" fill="#89aecb" opacity=".6"/></svg>'},
+ cushion:{w:52,h:52,svg:'<svg viewBox="0 0 100 100"><rect x="8" y="10" width="84" height="80" rx="18" fill="#e3a8a8"/><rect x="22" y="24" width="56" height="52" rx="12" fill="#f6ead4" opacity=".7"/><circle cx="50" cy="50" r="6" fill="#cf7b6a"/></svg>'},
+ blanket:{w:60,h:48,svg:'<svg viewBox="0 0 100 80"><rect x="6" y="12" width="88" height="58" rx="8" fill="#9dbfae"/><path d="M6 34 L94 34 M6 50 L94 50" stroke="#6d9282" stroke-width="4"/><path d="M30 12 L30 70 M62 12 L62 70" stroke="#6d9282" stroke-width="3" opacity=".6"/></svg>'},
+ bench:{w:96,h:56,svg:'<svg viewBox="0 0 100 60"><rect x="4" y="18" width="92" height="8" rx="3" fill="#b5804f"/><rect x="4" y="4" width="92" height="8" rx="3" fill="#c98f5c"/><rect x="10" y="12" width="6" height="8" fill="#8d5c34"/><rect x="84" y="12" width="6" height="8" fill="#8d5c34"/><rect x="10" y="26" width="7" height="28" fill="#8d5c34"/><rect x="83" y="26" width="7" height="28" fill="#8d5c34"/></svg>'},
+ 'rocking-chair':{w:72,h:84,svg:'<svg viewBox="0 0 100 116"><rect x="26" y="30" width="48" height="10" rx="4" fill="#c98f5c"/><rect x="26" y="6" width="10" height="30" rx="4" fill="#b5804f"/><rect x="64" y="6" width="10" height="30" rx="4" fill="#b5804f"/><rect x="30" y="40" width="7" height="34" fill="#8d5c34"/><rect x="63" y="40" width="7" height="34" fill="#8d5c34"/><path d="M8 100 Q50 118 92 100" stroke="#8d5c34" stroke-width="7" fill="none"/><rect x="20" y="86" width="60" height="7" rx="3" fill="#b5804f"/></svg>'},
+ 'coat-rack':{w:46,h:100,svg:'<svg viewBox="0 0 100 218"><rect x="46" y="20" width="8" height="180" fill="#8d5c34"/><path d="M50 22 L18 46 M50 22 L82 46 M50 40 L30 60" stroke="#8d5c34" stroke-width="6"/><path d="M22 46 L34 96 L14 96 Z" fill="#e3a8a8"/><path d="M78 46 L92 96 L66 96 Z" fill="#89aecb"/><ellipse cx="50" cy="204" rx="30" ry="8" fill="#8d5c34"/></svg>'},
+ teapot:{w:40,h:34,svg:'<svg viewBox="0 0 100 80"><ellipse cx="50" cy="46" rx="34" ry="26" fill="#f6ead4"/><path d="M84 40 C94 44 94 56 82 58" stroke="#f6ead4" stroke-width="8" fill="none"/><path d="M20 34 C10 34 8 50 20 54" stroke="#f6ead4" stroke-width="7" fill="none"/><rect x="38" y="14" width="24" height="8" rx="4" fill="#c98f5c"/><circle cx="50" cy="12" r="5" fill="#c98f5c"/><path d="M22 46 Q50 56 78 46" stroke="#e2cfae" stroke-width="4" fill="none"/></svg>'},
+ basket:{w:44,h:40,svg:'<svg viewBox="0 0 100 88"><path d="M12 30 L88 30 L78 82 L22 82 Z" fill="#c98f5c"/><path d="M20 44 L80 44 M24 60 L76 60" stroke="#8d5c34" stroke-width="4"/><path d="M28 30 C28 8 72 8 72 30" stroke="#8d5c34" stroke-width="6" fill="none"/></svg>'},
+ frame:{w:46,h:40,svg:'<svg viewBox="0 0 100 88"><rect x="8" y="8" width="84" height="72" rx="4" fill="#8d5c34"/><rect x="18" y="18" width="64" height="52" fill="#f6ead4"/><circle cx="50" cy="44" r="14" fill="#e3a8a8"/><path d="M50 30 L50 58 M36 44 L64 44" stroke="#cf7b6a" stroke-width="3"/></svg>'},
+ radio:{w:48,h:40,svg:'<svg viewBox="0 0 100 84"><rect x="6" y="20" width="88" height="58" rx="6" fill="#b5804f"/><rect x="14" y="28" width="40" height="24" rx="3" fill="#f6ead4"/><circle cx="78" cy="42" r="10" fill="#e2b95e"/><circle cx="78" cy="66" r="6" fill="#8d5c34"/><path d="M60 20 L74 6" stroke="#8d5c34" stroke-width="4"/></svg>'},
+ box:{w:40,h:40,svg:'<svg viewBox="0 0 100 100"><rect x="16" y="30" width="68" height="56" rx="6" fill="#b5804f"/><rect x="16" y="30" width="68" height="14" rx="6" fill="#8d5c34"/><rect x="44" y="30" width="12" height="56" fill="#e2cfae"/></svg>'},
+ bread:{w:44,h:34,svg:'<svg viewBox="0 0 100 76"><path d="M8 54 C8 24 30 10 50 10 C70 10 92 24 92 54 C70 66 30 66 8 54Z" fill="#d1a06a"/><path d="M26 30 L34 42 M44 24 L52 38 M62 26 L70 40" stroke="#b5804f" stroke-width="4"/></svg>'},
+ coffee:{w:36,h:38,svg:'<svg viewBox="0 0 100 106"><rect x="18" y="30" width="56" height="52" rx="8" fill="#fdf9f2"/><rect x="24" y="36" width="44" height="16" rx="4" fill="#8d5c34"/><path d="M74 44 C88 48 88 68 74 72" stroke="#fdf9f2" stroke-width="9" fill="none"/><path d="M40 24 C40 14 46 12 42 2 M58 24 C58 14 64 12 60 2" stroke="#c2b7a6" stroke-width="3" fill="none"/></svg>'},
+ teacup:{w:38,h:34,svg:'<svg viewBox="0 0 100 90"><path d="M14 26 L86 26 L76 60 C72 70 28 70 24 60 Z" fill="#f6ead4"/><path d="M86 34 C100 38 100 56 84 58" stroke="#f6ead4" stroke-width="8" fill="none"/><ellipse cx="50" cy="76" rx="34" ry="8" fill="#e2cfae"/><path d="M40 18 C40 8 46 6 42 -4 M60 18 C60 8 66 6 62 -4" stroke="#c2b7a6" stroke-width="3" fill="none"/></svg>'},
+ soup:{w:46,h:38,svg:'<svg viewBox="0 0 100 82"><path d="M10 34 L90 34 C86 62 64 74 50 74 C36 74 14 62 10 34Z" fill="#fdf9f2"/><path d="M16 34 L84 34 C80 44 68 50 50 50 C32 50 20 44 16 34Z" fill="#e2b95e"/><path d="M34 24 C34 12 40 10 36 0 M52 24 C52 12 58 10 54 0 M70 24 C70 14 76 12 72 2" stroke="#c2b7a6" stroke-width="3" fill="none"/></svg>'},
+ dumpling:{w:46,h:32,svg:'<svg viewBox="0 0 100 68"><path d="M8 46 C8 26 26 16 34 16 C42 16 50 26 50 46 Z" fill="#f6ead4"/><path d="M50 46 C50 26 68 16 76 16 C84 16 92 26 92 46 Z" fill="#e2cfae"/><path d="M14 24 L34 34 M20 18 L36 30" stroke="#d9c8a8" stroke-width="2"/></svg>'},
+ pie:{w:46,h:34,svg:'<svg viewBox="0 0 100 76"><path d="M10 58 L50 16 L90 58 Z" fill="#e2b95e"/><path d="M10 58 L90 58 L94 68 L6 68 Z" fill="#c98f5c"/><path d="M50 16 L50 58" stroke="#b5804f" stroke-width="3"/></svg>'},
+ cake:{w:44,h:42,svg:'<svg viewBox="0 0 100 96"><rect x="12" y="40" width="76" height="22" rx="4" fill="#f6ead4"/><rect x="12" y="62" width="76" height="24" rx="4" fill="#e3a8a8"/><rect x="12" y="36" width="76" height="8" rx="4" fill="#cf7b6a"/><path d="M50 36 L50 18" stroke="#e2b95e" stroke-width="4"/><path d="M50 18 C50 10 54 6 50 2 C46 6 48 14 50 18Z" fill="#e2b95e"/></svg>'},
+ cookie:{w:34,h:34,svg:'<svg viewBox="0 0 100 100"><circle cx="50" cy="52" r="40" fill="#d1a06a"/><circle cx="38" cy="40" r="6" fill="#8d5c34"/><circle cx="62" cy="36" r="5" fill="#8d5c34"/><circle cx="54" cy="62" r="6" fill="#8d5c34"/><circle cx="34" cy="66" r="4" fill="#8d5c34"/></svg>'},
+ book:{w:44,h:38,svg:'<svg viewBox="0 0 100 86"><rect x="12" y="14" width="76" height="58" rx="4" fill="#89aecb"/><rect x="12" y="14" width="12" height="58" fill="#5e86a6"/><rect x="30" y="26" width="48" height="6" rx="3" fill="#f6ead4"/><rect x="30" y="40" width="38" height="5" rx="2" fill="#f6ead4" opacity=".8"/></svg>'},
+ notebook:{w:40,h:42,svg:'<svg viewBox="0 0 100 104"><rect x="14" y="8" width="72" height="88" rx="5" fill="#f6ead4"/><rect x="14" y="8" width="10" height="88" fill="#cf7b6a"/><path d="M34 30 L74 30 M34 48 L74 48 M34 66 L64 66" stroke="#c2b7a6" stroke-width="4"/><rect x="60" y="8" width="26" height="10" fill="#e2b95e"/></svg>'},
+ postcard:{w:46,h:34,svg:'<svg viewBox="0 0 100 74"><rect x="6" y="8" width="88" height="58" fill="#f6ead4"/><rect x="6" y="8" width="58" height="58" fill="#cfe3ee"/><circle cx="24" cy="24" r="7" fill="#e2b95e"/><path d="M6 58 L28 34 L42 48 L52 40 L64 58 Z" fill="#6f9b5c"/><rect x="72" y="16" width="14" height="16" fill="#e3a8a8"/><path d="M70 44 L92 44 M70 54 L84 54" stroke="#c2b7a6" stroke-width="3"/></svg>'},
+ stamp:{w:34,h:38,svg:'<svg viewBox="0 0 100 110"><path d="M14 10 L86 10 L86 100 L14 100 Z" fill="#e3a8a8"/><path d="M14 10 L86 10 L86 100 L14 100 Z" fill="none" stroke="#f6ead4" stroke-width="6" stroke-dasharray="6 6"/><circle cx="50" cy="52" r="22" fill="#f6ead4"/><path d="M50 34 L58 50 L74 52 L62 64 L66 80 L50 70 L34 80 L38 64 L26 52 L42 50 Z" fill="#e2b95e"/></svg>'},
+ envelope:{w:46,h:32,svg:'<svg viewBox="0 0 100 68"><rect x="6" y="10" width="88" height="48" rx="3" fill="#f6ead4"/><path d="M6 10 L50 42 L94 10" stroke="#c2b7a6" stroke-width="4" fill="none"/><circle cx="50" cy="42" r="5" fill="#cf7b6a"/></svg>'},
+ ticket:{w:44,h:30,svg:'<svg viewBox="0 0 100 66"><path d="M6 12 L94 12 L94 26 C84 26 84 40 94 40 L94 54 L6 54 L6 40 C16 40 16 26 6 26 Z" fill="#e2b95e"/><path d="M36 20 L36 46" stroke="#b5804f" stroke-width="3" stroke-dasharray="5 5"/><path d="M48 26 L84 26 M48 38 L72 38" stroke="#b5804f" stroke-width="3"/></svg>'},
+ firstaid:{w:40,h:36,svg:'<svg viewBox="0 0 100 88"><rect x="8" y="20" width="84" height="60" rx="6" fill="#f6ead4"/><rect x="8" y="20" width="84" height="14" rx="6" fill="#e3a8a8"/><rect x="34" y="34" width="12" height="38" fill="#cf7b6a"/><rect x="22" y="46" width="36" height="12" fill="#cf7b6a"/></svg>'},
+ bottle:{w:28,h:44,svg:'<svg viewBox="0 0 100 156"><rect x="34" y="6" width="32" height="18" rx="4" fill="#5e86a6"/><path d="M30 24 L70 24 L78 60 L78 146 L22 146 L22 60 Z" fill="#89aecb"/><rect x="26" y="74" width="48" height="34" fill="#f6ead4"/><path d="M36 84 L64 84 M36 96 L56 96" stroke="#5e86a6" stroke-width="4"/></svg>'},
+ paint:{w:36,h:40,svg:'<svg viewBox="0 0 100 110"><rect x="16" y="26" width="68" height="72" rx="6" fill="#c98f5c"/><ellipse cx="50" cy="26" rx="34" ry="8" fill="#8d5c34"/><path d="M34 26 C34 10 66 10 66 26" stroke="#8d5c34" stroke-width="5" fill="none"/><rect x="36" y="60" width="28" height="20" rx="3" fill="#e3a8a8"/></svg>'},
+ toolbox:{w:46,h:36,svg:'<svg viewBox="0 0 100 80"><rect x="8" y="26" width="84" height="48" rx="6" fill="#cf7b6a"/><rect x="8" y="26" width="84" height="12" rx="6" fill="#b4655f"/><path d="M38 26 C38 12 62 12 62 26" stroke="#8d5c34" stroke-width="6" fill="none"/><rect x="44" y="42" width="12" height="10" fill="#e2b95e"/></svg>'},
+ raincoat:{w:46,h:54,svg:'<svg viewBox="0 0 100 118"><path d="M30 14 L70 14 L86 44 L76 50 L74 114 L26 114 L24 50 L14 44 Z" fill="#89aecb"/><circle cx="50" cy="16" r="10" fill="#5e86a6"/><path d="M50 40 L50 114" stroke="#5e86a6" stroke-width="4"/><circle cx="44" cy="56" r="3" fill="#f6ead4"/><circle cx="44" cy="76" r="3" fill="#f6ead4"/></svg>'},
+ scarf:{w:40,h:46,svg:'<svg viewBox="0 0 100 116"><path d="M18 12 L82 12 L82 40 L18 40 Z" fill="#cf7b6a"/><path d="M24 40 L24 104 L44 104 L44 40 Z" fill="#b4655f"/><path d="M62 40 L62 96 L78 96 L78 40 Z" fill="#b4655f"/><path d="M18 20 L82 20 M18 32 L82 32" stroke="#e3a8a8" stroke-width="4"/><path d="M24 104 L24 114 M32 104 L32 114 M70 96 L70 106" stroke="#b4655f" stroke-width="4"/></svg>'},
+ seed:{w:34,h:40,svg:'<svg viewBox="0 0 100 118"><rect x="14" y="10" width="72" height="98" rx="4" fill="#e2cfae"/><rect x="14" y="10" width="72" height="18" rx="4" fill="#b5804f"/><circle cx="50" cy="62" r="18" fill="#6f9b5c"/><path d="M50 44 L50 80 M34 62 L66 62" stroke="#4d7544" stroke-width="3"/><path d="M26 94 L74 94" stroke="#b5804f" stroke-width="4"/></svg>'},
+ soil:{w:46,h:30,svg:'<svg viewBox="0 0 100 64"><rect x="4" y="14" width="92" height="44" rx="6" fill="#8d6a45"/><rect x="4" y="14" width="92" height="10" rx="5" fill="#a37f55"/><path d="M18 34 L82 34 M18 44 L82 44" stroke="#6f5334" stroke-width="4" stroke-linecap="round"/></svg>'},
+ 'crop-seed':{w:40,h:32,svg:'<svg viewBox="0 0 100 76"><rect x="6" y="44" width="88" height="26" rx="6" fill="#8d6a45"/><path d="M30 44 C30 32 50 32 50 44" stroke="#7fa662" stroke-width="5" fill="none"/><ellipse cx="34" cy="34" rx="7" ry="5" fill="#9c7346"/><ellipse cx="62" cy="36" rx="6" ry="4" fill="#c9a15f"/></svg>'},
+ 'crop-sprout':{w:42,h:40,svg:'<svg viewBox="0 0 100 96"><rect x="6" y="66" width="88" height="24" rx="6" fill="#8d6a45"/><path d="M50 66 L50 40" stroke="#6f9b5c" stroke-width="5"/><path d="M50 46 C36 46 30 34 32 26 C44 24 50 34 50 46 Z" fill="#8dbb6d"/><path d="M50 50 C64 50 70 38 68 30 C56 28 50 38 50 50 Z" fill="#7fa662"/></svg>'},
+ 'crop-leaf':{w:44,h:48,svg:'<svg viewBox="0 0 100 112"><rect x="6" y="82" width="88" height="24" rx="6" fill="#8d6a45"/><path d="M50 82 L50 30" stroke="#5e8a4d" stroke-width="6"/><path d="M50 60 C30 60 22 44 24 34 C40 32 50 44 50 60 Z" fill="#7fa662"/><path d="M50 66 C70 66 78 50 76 40 C60 38 50 50 50 66 Z" fill="#8dbb6d"/><path d="M50 40 C40 40 34 30 36 22 C46 22 50 30 50 40 Z" fill="#6f9b5c"/></svg>'},
+ 'crop-tomato':{w:46,h:48,svg:'<svg viewBox="0 0 100 112"><rect x="6" y="82" width="88" height="24" rx="6" fill="#8d6a45"/><path d="M50 82 L50 26" stroke="#5e8a4d" stroke-width="6"/><path d="M50 56 C30 56 22 40 24 30 C40 28 50 40 50 56 Z" fill="#7fa662"/><path d="M50 62 C70 62 78 46 76 36 C60 34 50 46 50 62 Z" fill="#8dbb6d"/><circle cx="38" cy="66" r="8" fill="#c9553f"/><circle cx="62" cy="70" r="7" fill="#d9694f"/></svg>'},
+ 'crop-pumpkin':{w:50,h:44,svg:'<svg viewBox="0 0 100 92"><rect x="6" y="62" width="88" height="24" rx="6" fill="#8d6a45"/><ellipse cx="50" cy="54" rx="34" ry="24" fill="#d98b3c"/><path d="M50 30 L50 18" stroke="#6f7a3f" stroke-width="5"/><path d="M20 54 C20 40 34 34 50 34 C66 34 80 40 80 54" fill="none" stroke="#b9722c" stroke-width="3"/><path d="M50 34 L50 78" stroke="#b9722c" stroke-width="3"/></svg>'},
+ 'crop-wheat':{w:40,h:52,svg:'<svg viewBox="0 0 100 124"><rect x="6" y="94" width="88" height="22" rx="6" fill="#8d6a45"/><path d="M36 94 L36 30 M64 94 L64 40" stroke="#c9a15f" stroke-width="5"/><path d="M36 44 L26 36 M36 44 L46 36 M36 60 L26 52 M36 60 L46 52 M64 54 L54 46 M64 54 L74 46 M64 70 L54 62 M64 70 L74 62" stroke="#d9b465" stroke-width="4" stroke-linecap="round"/></svg>'},
+ 'crop-herb':{w:42,h:44,svg:'<svg viewBox="0 0 100 104"><rect x="6" y="74" width="88" height="24" rx="6" fill="#8d6a45"/><path d="M50 74 L50 28 M50 56 L34 40 M50 60 L66 44" stroke="#4d7544" stroke-width="4"/><ellipse cx="34" cy="38" rx="9" ry="6" fill="#7fa662" transform="rotate(-25 34 38)"/><ellipse cx="66" cy="42" rx="9" ry="6" fill="#8dbb6d" transform="rotate(25 66 42)"/><ellipse cx="50" cy="26" rx="8" ry="6" fill="#6f9b5c"/></svg>'},
+ 'crop-flower':{w:44,h:50,svg:'<svg viewBox="0 0 100 114"><rect x="6" y="86" width="88" height="22" rx="6" fill="#8d6a45"/><path d="M50 86 L50 40" stroke="#5e8a4d" stroke-width="4"/><path d="M50 66 C38 66 32 56 34 50 C44 48 50 56 50 66 Z" fill="#7fa662"/><circle cx="50" cy="30" r="9" fill="#e2b95e"/><circle cx="36" cy="38" r="7" fill="#e391b0"/><circle cx="64" cy="38" r="7" fill="#e391b0"/><circle cx="50" cy="46" r="7" fill="#cf7b6a"/><path d="M50 30 L50 22" stroke="#8dbb6d" stroke-width="4"/></svg>'},
+ fruit:{w:36,h:36,svg:'<svg viewBox="0 0 100 100"><circle cx="50" cy="58" r="34" fill="#c9553f"/><path d="M50 26 C50 16 58 12 66 14" stroke="#5e8a4d" stroke-width="5" fill="none"/><path d="M56 22 C66 18 74 24 72 32 C60 34 54 28 56 22 Z" fill="#7fa662"/><ellipse cx="36" cy="46" rx="8" ry="5" fill="#f0b3a0" opacity=".45" transform="rotate(-30 36 46)"/></svg>'},
+ nightstand:{w:70,h:64,svg:'<svg viewBox="0 0 100 92"><rect x="14" y="26" width="72" height="46" rx="6" fill="#b98a58"/><rect x="20" y="32" width="60" height="14" rx="3" fill="#dcc3a0"/><rect x="20" y="50" width="60" height="14" rx="3" fill="#dcc3a0"/><circle cx="50" cy="39" r="2.5" fill="#7d5a33"/><circle cx="50" cy="57" r="2.5" fill="#7d5a33"/><rect x="18" y="72" width="7" height="12" fill="#8d5c34"/><rect x="75" y="72" width="7" height="12" fill="#8d5c34"/></svg>'},
+ vanity:{w:92,h:78,svg:'<svg viewBox="0 0 100 84"><rect x="10" y="30" width="80" height="34" rx="5" fill="#c79a68"/><rect x="16" y="6" width="68" height="26" rx="12" fill="#e6d3b3"/><ellipse cx="50" cy="19" rx="24" ry="9" fill="#f7f1e3"/><rect x="26" y="64" width="8" height="16" fill="#8d5c34"/><rect x="66" y="64" width="8" height="16" fill="#8d5c34"/></svg>'},
+ fireplace:{w:104,h:86,svg:'<svg viewBox="0 0 100 82"><rect x="8" y="14" width="84" height="58" rx="4" fill="#a8886a"/><rect x="24" y="26" width="52" height="46" rx="4" fill="#3b2a20"/><path d="M50 66c-12 0-16-9-10-16 3-4 4-9 2-13 8 3 10 9 9 13 3-2 5-6 5-9 6 7 6 25-6 25z" fill="#e8894a"/><rect x="4" y="8" width="92" height="8" rx="3" fill="#8d6b4e"/></svg>'},
+ stove:{w:88,h:70,svg:'<svg viewBox="0 0 100 80"><rect x="10" y="22" width="80" height="50" rx="4" fill="#cfd6d9"/><rect x="16" y="48" width="68" height="18" rx="3" fill="#8f9aa0"/><circle cx="34" cy="32" r="7" fill="#5b6469"/><circle cx="66" cy="32" r="7" fill="#5b6469"/><circle cx="34" cy="58" r="2.5" fill="#59636a"/><circle cx="50" cy="58" r="2.5" fill="#59636a"/><circle cx="66" cy="58" r="2.5" fill="#59636a"/></svg>'},
+ sink:{w:78,h:56,svg:'<svg viewBox="0 0 100 72"><rect x="12" y="26" width="76" height="36" rx="6" fill="#eef3f2"/><rect x="22" y="34" width="56" height="20" rx="9" fill="#d8e3e2"/><rect x="46" y="10" width="7" height="18" rx="3" fill="#9aa7a5"/><rect x="40" y="6" width="20" height="7" rx="3" fill="#9aa7a5"/><rect x="20" y="62" width="8" height="8" fill="#b9c6c4"/><rect x="72" y="62" width="8" height="8" fill="#b9c6c4"/></svg>'},
+ counter:{w:104,h:54,svg:'<svg viewBox="0 0 100 52"><rect x="4" y="22" width="92" height="22" rx="3" fill="#b98a58"/><rect x="2" y="14" width="96" height="10" rx="3" fill="#e7ddc9"/><rect x="18" y="26" width="28" height="14" rx="2" fill="#cfae83"/><rect x="54" y="26" width="28" height="14" rx="2" fill="#cfae83"/></svg>'},
+ fridge:{w:64,h:92,svg:'<svg viewBox="0 0 70 100"><rect x="10" y="4" width="50" height="92" rx="7" fill="#e8e3d6"/><rect x="10" y="40" width="50" height="3" fill="#c9c2b2"/><rect x="50" y="14" width="4" height="18" rx="2" fill="#a8a294"/><rect x="50" y="50" width="4" height="22" rx="2" fill="#a8a294"/></svg>'},
+ screen:{w:96,h:66,svg:'<svg viewBox="0 0 100 70"><rect x="6" y="18" width="26" height="46" rx="2" fill="#e6d3b3"/><rect x="36" y="12" width="26" height="52" rx="2" fill="#dcc7a3"/><rect x="66" y="18" width="26" height="46" rx="2" fill="#e6d3b3"/><rect x="6" y="14" width="86" height="6" rx="3" fill="#a9762f"/><rect x="10" y="64" width="6" height="6" fill="#8d5c34"/><rect x="84" y="64" width="6" height="6" fill="#8d5c34"/></svg>'},
+ 'shoe-cabinet':{w:76,h:56,svg:'<svg viewBox="0 0 100 70"><rect x="8" y="26" width="84" height="34" rx="4" fill="#c08a52"/><rect x="14" y="32" width="34" height="22" rx="2" fill="#d9b183"/><rect x="52" y="32" width="34" height="22" rx="2" fill="#d9b183"/><rect x="12" y="60" width="6" height="8" fill="#8d5c34"/><rect x="82" y="60" width="6" height="8" fill="#8d5c34"/></svg>'},
+ 'desk-chair':{w:66,h:70,svg:'<svg viewBox="0 0 80 84"><rect x="18" y="8" width="44" height="34" rx="6" fill="#a9762f"/><rect x="22" y="44" width="36" height="10" rx="4" fill="#c79a68"/><rect x="36" y="54" width="8" height="22" fill="#8d5c34"/><rect x="20" y="76" width="40" height="6" rx="3" fill="#8d5c34"/></svg>'},
+ 'wall-shelf':{w:92,h:40,svg:'<svg viewBox="0 0 100 44"><rect x="4" y="24" width="92" height="10" rx="3" fill="#b98a58"/><rect x="14" y="8" width="14" height="16" rx="2" fill="#cf9d68"/><rect x="32" y="10" width="10" height="14" rx="2" fill="#8d5c34"/><rect x="56" y="6" width="12" height="18" rx="2" fill="#6f9a54"/></svg>'},
+ rod:{w:96,h:22,svg:'<svg viewBox="0 0 100 24"><rect x="4" y="9" width="92" height="6" rx="3" fill="#a9762f"/><circle cx="6" cy="12" r="5" fill="#8d5c34"/><circle cx="94" cy="12" r="5" fill="#8d5c34"/><rect x="26" y="4" width="6" height="16" rx="3" fill="#e2cfae"/><rect x="48" y="4" width="6" height="16" rx="3" fill="#e2cfae"/><rect x="70" y="4" width="6" height="16" rx="3" fill="#e2cfae"/></svg>'},
+ 'wall-lamp':{w:46,h:54,svg:'<svg viewBox="0 0 50 58"><path d="M25 6v14" stroke="#8d5c34" stroke-width="3"/><path d="M8 40 25 20l17 20z" fill="#f0d79a"/><ellipse cx="25" cy="42" rx="18" ry="5" fill="#e7c98c"/></svg>'},
+ 'tv':{w:120,h:82,svg:'<svg viewBox="0 0 130 90"><rect x="8" y="8" width="114" height="66" rx="9" fill="#3c3833"/><rect x="15" y="15" width="100" height="52" rx="5" fill="#20262b"/><rect x="20" y="20" width="90" height="42" rx="3" fill="#2f5f74"/><circle cx="40" cy="36" r="7" fill="#8fd3e0" opacity=".8"/><path d="M62 46l14-9v18z" fill="#e8f5f7" opacity=".85"/><rect x="55" y="74" width="26" height="5" rx="2" fill="#6d5a44"/><rect x="30" y="79" width="76" height="6" rx="3" fill="#8d5c34"/></svg>'},
+ 'tv-cabinet':{w:132,h:52,svg:'<svg viewBox="0 0 140 56"><rect x="6" y="6" width="128" height="38" rx="5" fill="#a9784a"/><rect x="10" y="10" width="58" height="30" rx="3" fill="#c08d5d"/><rect x="72" y="10" width="58" height="30" rx="3" fill="#c08d5d"/><circle cx="39" cy="25" r="2.6" fill="#5d4128"/><circle cx="101" cy="25" r="2.6" fill="#5d4128"/><rect x="14" y="44" width="12" height="10" rx="2" fill="#7c5636"/><rect x="114" y="44" width="12" height="10" rx="2" fill="#7c5636"/></svg>'},
+ 'speaker':{w:58,h:86,svg:'<svg viewBox="0 0 60 90"><rect x="8" y="6" width="44" height="78" rx="6" fill="#7a5233"/><rect x="12" y="10" width="36" height="70" rx="5" fill="#8d6242"/><circle cx="30" cy="32" r="14" fill="#5d4128"/><circle cx="30" cy="32" r="5" fill="#43301e"/><circle cx="30" cy="62" r="9" fill="#43301e"/><circle cx="30" cy="62" r="3" fill="#6b4b2c"/></svg>'},
+ 'washing-machine':{w:78,h:92,svg:'<svg viewBox="0 0 80 94"><rect x="8" y="4" width="64" height="86" rx="8" fill="#dfe3e6"/><rect x="12" y="8" width="56" height="12" rx="3" fill="#c7cfd4"/><circle cx="20" cy="14" r="3" fill="#7f8d96"/><circle cx="30" cy="14" r="3" fill="#7f8d96"/><circle cx="41" cy="53" r="22" fill="#b9c4cb"/><circle cx="41" cy="53" r="17" fill="#4a89b0"/><circle cx="41" cy="53" r="17" fill="#ffffff" opacity=".25"/><path d="M41 41c6 6 6 18 0 24" stroke="#e9f6ff" stroke-width="3" fill="none" opacity=".7"/></svg>'},
+ 'microwave':{w:78,h:52,svg:'<svg viewBox="0 0 80 56"><rect x="6" y="6" width="68" height="44" rx="6" fill="#cfd6da"/><rect x="11" y="11" width="46" height="34" rx="4" fill="#3d474d"/><rect x="14" y="14" width="40" height="28" rx="3" fill="#22303a"/><circle cx="67" cy="20" r="4" fill="#7b8a92"/><rect x="63" y="30" width="8" height="12" rx="2" fill="#8d9aa2"/><path d="M20 36l16-8v16z" fill="#ffd98a" opacity=".7"/></svg>'},
+ 'ceiling-lamp':{w:58,h:62,svg:'<svg viewBox="0 0 60 64"><path d="M30 2v22" stroke="#6d5a44" stroke-width="2"/><path d="M8 44 30 24l22 20z" fill="#f6e3b4"/><ellipse cx="30" cy="46" rx="24" ry="7" fill="#ffe9b8"/><circle cx="30" cy="47" r="7" fill="#fff6d6"/></svg>'},
+ 'beanbag':{w:74,h:62,svg:'<svg viewBox="0 0 76 64"><ellipse cx="38" cy="48" rx="33" ry="13" fill="#c9866b"/><path d="M10 46c2-22 12-34 28-34s26 12 28 34z" fill="#dd9b7d"/><path d="M20 40c0-13 7-21 18-21s18 8 18 21z" fill="#eab296" opacity=".8"/></svg>'},
+ 'dining-chair':{w:52,h:86,svg:'<svg viewBox="0 0 54 90"><rect x="10" y="4" width="34" height="34" rx="4" fill="#ae7a4d"/><rect x="14" y="8" width="26" height="26" rx="3" fill="#c99560"/><rect x="8" y="40" width="38" height="10" rx="3" fill="#9a6b42"/><rect x="12" y="50" width="6" height="34" rx="2" fill="#7c5636"/><rect x="36" y="50" width="6" height="34" rx="2" fill="#7c5636"/></svg>'}
+}
+const SPRITE_EXT=['png','webp','svg']
+const userSprites=new Map()
+function loadUserSprite(key,index,done){
+  if(userSprites.has(key))return done(userSprites.get(key))
+  const ext=SPRITE_EXT[index]
+  if(!ext){userSprites.set(key,null);return done(null)}
+  const probe=new Image()
+  probe.onload=()=>{userSprites.set(key,spriteRoot+key+'.'+ext);done(userSprites.get(key))}
+  probe.onerror=()=>loadUserSprite(key,index+1,done)
+  probe.src=spriteRoot+key+'.'+ext
+}
+function spriteEl(key,w,h){
+  const model=MODELS[key]||MODELS.box,node=el('div')
+  node.className='sprite';node.dataset.sprite=key
+  node.style.width=(w||model.w)+'px';node.style.height=(h||model.h)+'px'
+  node.innerHTML=model.svg
+  loadUserSprite(key,0,src=>{
+    if(!src)return
+    const img=document.createElement('img');img.src=src;img.alt=''
+    img.style.cssText='width:100%;height:100%;object-fit:contain;display:block'
+    img.onerror=()=>{node.innerHTML=model.svg}
+    node.replaceChildren(img)
+  })
+  return node
+}
+const FOOTPRINT={sofa:[27,17],armchair:[15,14],bed:[31,26],wardrobe:[14,26],bookshelf:[16,24],shelf:[16,9],cabinet:[16,13],table:[22,16],lowtable:[15,11],desk:[22,14],stool:[8,8],bench:[20,9],rug:[27,18],plant:[8,10],'floor-lamp':[7,11],lamp:[8,9],painting:[10,8],mirror:[7,11],clock:[6,6],radio:[7,6],teapot:[6,5],basket:[8,6],vase:[6,8],hanging:[7,9],flowers:[7,7],cushion:[6,6],blanket:[8,6],'rocking-chair':[15,14],'coat-rack':[7,13],box:[8,8],fruit:[6,5],seed:[6,5],nightstand:[12,12],vanity:[17,14],fireplace:[20,16],stove:[17,13],sink:[15,11],counter:[21,10],fridge:[12,17],screen:[18,13],'shoe-cabinet':[14,10],'desk-chair':[12,13],'wall-shelf':[18,8],'wall-lamp':[9,10],rod:[20,5],tv:[17,13],'tv-cabinet':[20,8],speaker:[9,14],'washing-machine':[13,16],microwave:[13,9],'ceiling-lamp':[10,8],beanbag:[16,13],'dining-chair':[9,13]}
+function furnEl(item){
+  const key=item.sprite||spriteGuess(item.name)
+  const [fw,fh]=FOOTPRINT[key]||[10,10]
+  const box=el('div');box.className='furnimg'
+  box.style.width='100%';box.style.height='100%'
+  const shade=el('i');shade.className='fshadow'
+  box.append(shade,spriteEl(key))
+  return box
+}
+function hearts(count){
+  const filled=Math.max(0,Math.min(5,Number(count)||0))
+  return '♥'.repeat(filled)+'♡'.repeat(5-filled)
+}
+function affinityEl(affinity){
+  const wrap=el('span');wrap.className='affinity'
+  if(!affinity){wrap.append(el('span','初次见面'));return wrap}
+  const bar=el('span');bar.className='bar'
+  const fill=document.createElement('i');fill.style.width=Math.round(Math.max(0,Math.min(1,Number(affinity.progress)||0))*100)+'%'
+  bar.append(fill)
+  wrap.append(el('span',(affinity.label||'初识')+' '+hearts(affinity.hearts)),bar)
+  return wrap
+}
+const SPRITE_RULES=[[/沙发/,'sofa'],[/扶手.*椅/,'armchair'],[/餐桌|饭桌/,'table'],[/茶几|边几|小桌/,'lowtable'],[/凳/,'stool'],[/书桌|写字台/,'desk'],[/书架/,'bookshelf'],[/层架|壁架|搁板|陈列架/,'shelf'],[/衣柜/,'wardrobe'],[/柜/,'cabinet'],[/床/,'bed'],[/地毯/,'rug'],[/落地镜|穿衣镜|镜/,'mirror'],[/画/,'painting'],[/钟/,'clock'],[/落地灯/,'floor-lamp'],[/灯/,'lamp'],[/绿萝|垂吊/,'hanging'],[/盆栽|植物/,'plant'],[/花瓶/,'vase'],[/花/,'flowers'],[/蜡烛/,'candle'],[/窗帘|帘/,'curtain'],[/靠垫|抱枕|垫/,'cushion'],[/毯/,'blanket'],[/长凳|长椅|条凳/,'bench'],[/摇椅/,'rocking-chair'],[/衣架/,'coat-rack'],[/茶壶/,'teapot'],[/篮/,'basket'],[/相框|镜框|画框/,'frame'],[/收音机/,'radio'],[/面包/,'bread'],[/咖啡/,'coffee'],[/茶|杯/,'teacup'],[/汤/,'soup'],[/饺子/,'dumpling'],[/派|挞/,'pie'],[/蛋糕/,'cake'],[/曲奇|饼干/,'cookie'],[/绘本|书/,'book'],[/日记|笔记本|手账|本子/,'notebook'],[/明信片/,'postcard'],[/邮票/,'stamp'],[/信/,'envelope'],[/票/,'ticket'],[/急救/,'firstaid'],[/油漆|漆/,'paint'],[/工具箱|工具/,'toolbox'],[/雨衣/,'raincoat'],[/围巾/,'scarf'],[/种子/,'seed'],[/瓶/,'bottle']]
+function spriteGuess(name){
+  const label=String(name||'')
+  for(const [pattern,key] of SPRITE_RULES) if(pattern.test(label)) return key
+  return 'box'
+}
+let mapUrl, mapRequest
+function showMapImage(image){
+ if(mapUrl){if(!image.hasAttribute('src'))image.src=mapUrl;return}
+ if(!mapRequest)mapRequest=fetch('/oakbrook.webp').then(r=>{
+   if(!r.ok)throw Error('地图加载失败')
+   return r.blob()
+ }).then(blob=>{
+   mapUrl=URL.createObjectURL(blob)
+   if(!roomOpen)image.src=mapUrl
+ }).catch(()=>{$('notice').textContent='地图加载失败，正在重试'}).finally(()=>{mapRequest=null})
+}
+const view=$('viewport')
+view.onwheel=e=>{if(!e.ctrlKey&&!e.shiftKey)return;e.preventDefault();zoom(Number($('zoom').value)+(e.deltaY<0?25:-25))}
+let pan
+view.onpointerdown=e=>{if(e.pointerType==='mouse'&&e.button===0)pan=[e.clientX,e.clientY,view.scrollLeft,view.scrollTop]}
+view.onpointermove=e=>{if(!pan||!e.buttons)return;const dx=e.clientX-pan[0],dy=e.clientY-pan[1];if(Math.abs(dx)+Math.abs(dy)>5){view.setPointerCapture(e.pointerId);view.scrollLeft=pan[2]-dx;view.scrollTop=pan[3]-dy}}
+window.addEventListener('pointerup',()=>pan=null)
+function draw(){
+ const locs=state.locations||[],here=state.location?.id
+ const place=locs.find(x=>x.id===selected)||locs.find(x=>x.id===here)||locs[0]
+ $('pins').replaceChildren()
+ const trip=state.travel?.inProgress
+ if(!roomOpen){
+ locs.forEach((p,i)=>{const pt=coords[p.id]||[8+i*4,96];const b=button('',()=>select(p.id));b.append(el('span',p.name));b.className='hit';b.setAttribute('aria-pressed',p.id===place?.id);position(b,...pt);$('pins').append(b)})
+ const path=trip?route(trip.from,trip.to):selected&&selected!==here?route(here,selected):[]
+ if(path.length){
+   const ns='http://www.w3.org/2000/svg',overlay=document.createElementNS(ns,'svg'),line=document.createElementNS(ns,'polyline')
+   overlay.setAttribute('viewBox','0 0 150 100');overlay.setAttribute('preserveAspectRatio','none');overlay.setAttribute('aria-hidden','true');overlay.classList.add('route')
+   line.setAttribute('points',path.map(([x,y])=>(x*1.5)+','+y).join(' '));overlay.append(line);$('pins').prepend(overlay)
+ }
+ const pos=trip?along(path,Number(trip.progress)||0):coords[here]
+ if(pos){const traveler=el('div');traveler.className='traveler';traveler.append(avatar());position(traveler,...pos);$('pins').append(traveler)}
+ }
+ $('resident').textContent=trip?'前往'+(locs.find(p=>p.id===trip.to)?.name||'目的地')+' · '+Math.round(trip.progress*100)+'%':state.location?.name||'她'
+ let badge=document.querySelector('.fish-avatar');if(!badge){badge=el('div');badge.className='fish-avatar';$('resident').before(badge)}badge.replaceChildren(avatar())
+ const mapImage=$('land').querySelector('img')
+ if(roomOpen&&mapImage.hasAttribute('src'))mapImage.removeAttribute('src')
+ if(!roomOpen){
+   showMapImage(mapImage)
+   if($('stage').dataset.scene){$('stage').replaceChildren();$('stage').style.backgroundImage='none';delete $('stage').dataset.scene;$('object-panel').replaceChildren()}
+ }
+ view.hidden=roomOpen;$('room').hidden=!roomOpen;$('back').hidden=!roomOpen;$('zoom-label').hidden=roomOpen
+ $('stats').textContent='现实时间 '+(state.realTime?.local||'--:--')+'　·　精力 '+state.energy+'　／　余额 '+(state.wallet?.balance??state.coins)+' 镇币　·　地点 '+(state.locations||[]).length+'　·　商店 '+(state.shops||[]).length
+ $('activity').textContent=[state.realTime?.local,state.weatherEffect,state.currentPhase,state.lastEvent?.text,state.lastAction?.text,(state.npcs||[]).map(n=>n.name+'在'+(state.locations||[]).find(p=>p.id===n.locationId)?.name).join('、')].filter(Boolean).join('　·　')
+ const d=$('details');d.replaceChildren();if(!place)return
+ d.append(el('small',places[blocks[place.id]]||'街区'),el('h2',place.name),el('p',place.description||''))
+ statusStrip(d,place)
+ planBox(d,place)
+ {const hv=state.hours&&state.hours[place.id];if(hv)d.append(el('p','🕘 '+hv.label+(hv.isOpen&&!hv.always?'（'+hv.openText+'–'+hv.closeText+'）':'')))}
+ const inside=place.id===here&&!trip
+ if(!roomOpen){d.append(button('查看'+(place.id==='moonlake-park'?'湖岸亭':'室内'),()=>select(place.id,true)))}
+  else {d.append(el('p',place.interior?.detail||''));if(place.id==='fish-home'){drawHome(place,inside);homePanel(d,place,inside);return}drawRoom(place,inside)}
+ function control(label,kind,extra={}){const b=button(label,()=>run({id:place.id,kind,...extra}));b.disabled=busy;return b}
+ if(!inside && !state.travel?.inProgress){const travelBox=el('div','');travelBox.className='choices';const walk=control('步行进入 · '+(place.walkMinutes||0)+' 分钟','travel',{mode:'walk'});walk.className='primary';travelBox.append(walk);if(place.transitMinutes){const tb=control('交通到达 · '+place.transitMinutes+' 分钟','travel',{mode:'transit'});if(state.openHours&&state.openHours['oakbrook-station']===false){tb.disabled=true;tb.textContent='车站已收班 · 只能走'}travelBox.append(tb)}d.append(travelBox)} else if(state.travel?.inProgress){d.append(el('p',`正在前往${locs.find(p=>p.id===state.travel.inProgress.to)?.name||'目的地'}，请等待行程完成。`))}
+ else {const group=el('div','');group.className='choices';for(const action of activities[here]||['在附近走走'])group.append(control(action,'act',{action}));d.append(group)}
+ if(false){const home=el('div','');home.className='choices';if(place.id==='fish-home'){const decorItems=(state.inventory||[]).filter(x=>x.decor||/灯|架|漆|盆栽|花瓶|长凳|围巾|台灯|邮票/.test(x.name||''));if(decorItems.length){home.append(el('strong','自由布置小屋'));for(const item of decorItems.slice(-6)){const row=el('div','');row.className='row';row.append(el('span',item.name));row.append(control('放到书桌','decorate',{item:item.id,room:'小书桌与日记本',x:35,y:45,rotation:0}));row.append(control('放到窗边','decorate',{item:item.id,room:'收藏瓶与窗边花盆',x:70,y:35,rotation:0}));home.append(row)}}}d.append(home)}
+  const shop=state.shops?.find(s=>(s.locationId||s.id)===place.id)
+ if(shop)d.append(el('h3','展示柜'),el('p','店里的东西都摆在正前面的展示柜里，点一件看详情和价格。'))
+  if(inside&&!state.travel?.inProgress)jobsBox(d,place,control)
+  if(!state.travel?.inProgress)dailyBox(d,place)
+  if(inside){
+   const npcs=(state.npcs||[]).filter(n=>n.locationId===place.id); if(npcs.length){d.append(el('h3','正在这里的居民'));for(const npc of npcs){const row=el('div','');row.className='row';row.append(el('span',npc.name+' · '+npc.activity),affinityEl(npc.affinity),control('聊几句','npc-talk',{npcId:npc.id,text:'在'+place.name+'见面'}));d.append(row);if(inside){(state.inventory||[]).length&&d.append(giftBox(npc,place))}}}
+   const suggest=button('看看此刻发生什么',async()=>{const r=await fetch('/action',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'event-suggestion'})});const v=await r.json();$('notice').textContent=v.event?.title? v.event.title+'：'+v.event.text : '暂无新的生活建议'});suggest.disabled=busy;d.append(suggest)
+  }
+  if(place.id==='fish-home'&&(state.homeDecor||[]).length){d.append(el('h3','小屋已布置'));for(const item of state.homeDecor.slice(-8)){const label=state.showDecorDetails===false?item.name:`${item.name} · ${item.room||'小屋'} · ${item.x||50},${item.y||50} · ${item.rotation||0}°`;const row=el('div','');row.className='row';row.append(el('span',label));if(inside&&place.id==='fish-home'){row.append(control('左转','decorate',{item:item.instanceId||item.id,decorAction:'rotate',rotation:(Number(item.rotation)||0)-15}));row.append(control('移动到窗边','decorate',{item:item.instanceId||item.id,decorAction:'move',room:item.room,x:72,y:35,rotation:item.rotation||0}));row.append(control('收回','decorate',{item:item.instanceId||item.id,decorAction:'remove'}))}d.append(row)}}
+  if((state.inventory||[]).length){d.append(el('h3','随身物品'));for(const item of state.inventory.slice(-10)){const row=el('div','');row.className='goods-row';row.append(spriteEl(item.sprite||spriteGuess(item.name),26,26),el('span',item.name+(item.food?'（可吃 +'+item.food.energy+' 精力）':'')));if(item.food||item.energy)row.append(control('吃','eat',{item:item.id}));if(item.seed&&inside&&place.id==='fish-home')row.append(control('种到小院','plant',{seedId:item.id}));if(inside&&place.id==='fish-home'&&(item.decor||!item.seed))row.append(control('布置','decorate',{item:item.id}));if(!item.seed)row.append(control('卖掉','sell',{item:item.id}));d.append(row)}}
+}
+// Each hotspot is anchored to the furniture illustrated in its own room.
+const objects=[
+ [['日记本',78,61],['渔具架',19,38],['窗台',51,48]],
+ [['木栈道',48,83],['观景长椅',39,68],['鸟食台',79,54]],
+ [['鲜花桶',22,63],['盆栽',73,65],['种子架',78,39]],
+ [['面包柜',46,66],['咖啡台',22,49],['砖烤炉',77,45]],
+ [['公告栏',26,35],['包裹',74,76],['明信片格',75,38]],
+ [['档案架',18,47],['阅览桌',55,76],['旅行书架',74,40]],
+ [['餐桌',30,74],['窗边座位',81,71],['汤锅',46,47]],
+ [['果蔬箱',28,73],['展示台',73,72],['杂货架',76,44]],
+ [['护理柜',26,51],['药瓶架',74,42],['急救台',47,71]],
+ [['样品木架',22,51],['工具墙',70,43],['木工台',48,75]],
+ [['工具墙',30,38],['材料架',74,47],['修理台',61,74]],
+ [['成衣架',74,51],['试衣镜',86,37],['布料台',59,75]],
+ [['公告牌',29,43],['纪念票',51,61],['海报架',75,53]],
+ [['站台钟',66,32],['检票口',81,61],['候车椅',38,75]],
+ [['样品沙发',30,62],['样板衣柜',68,58],['价目牌',50,32]]
+]
+let pendingItem=null,activeRoom=null
+
+function meter(label,value,max,cls){
+  const wrap=el('span','');wrap.className='meter '+(cls||'')
+  const bar=el('span','');bar.className='bar';const fill=document.createElement('i')
+  fill.style.width=Math.max(0,Math.min(100,Number(value)/max*100))+'%';bar.append(fill)
+  wrap.append(el('small',label),bar,el('b',String(Math.round(Number(value)||0))))
+  return wrap
+}
+function statusStrip(d,place){
+  const tone=state.tone||{},clock=state.clock||{},full=state.fullness||{}
+  const box=el('div','');box.className='status-strip'
+  box.append(el('span','⏱ '+(clock.label||'')+' '+(clock.local||'')))
+  box.append(meter('精力',state.energy||0,100,'energy'))
+  box.append(meter('心情',state.mood||0,100,'mood'))
+  box.append(el('span','饱食 · '+(full.label||'—')))
+  box.append(el('span','镇币 '+(state.coins??0)))
+  d.append(box)
+  if(tone.voice)d.append(el('p','此刻的她：'+tone.voice))
+  const act=state.activity
+  if(act){
+    const row=el('div','');row.className='activity'
+    row.append(el('b','正在'+act.label+' · 还剩 '+(act.remainMinutes||0)+' 分钟'))
+    const bar=el('div','');bar.className='bar';const fill=document.createElement('i')
+    const pct=act.minutes?100-(Number(act.remainMinutes||0)/Number(act.minutes))*100:6
+    fill.style.width=Math.max(6,Math.min(100,pct))+'%';bar.append(fill);row.append(bar)
+    row.append(el('small','这段时间也能聊天，她只是手上忙着。'))
+    d.append(row)
+  }
+  if(state.lastResult&&state.lastResult.text)d.append(el('p','· '+state.lastResult.text))
+}
+function jobsBox(d,place,control){
+  const jobs=Array.isArray(state.jobs)?state.jobs:[]
+  if(!jobs.length)return
+  d.append(el('h3','今天能干的活'))
+  for(const job of jobs){
+    const row=el('div','');row.className='job-row'
+    row.append(spriteEl('toolbox',26,26))
+    const info=el('span',job.name+' · '+job.pay+' 镇币 · '+job.minutes+' 分钟 · 精力 '+job.energy)
+    row.append(info)
+    const b=control('干活','work',{jobId:job.id});b.className='primary'
+    if(!job.available){b.disabled=true;b.title=job.reason||''}
+    row.append(b)
+    if(job.times)row.append(el('small','干过 '+job.times+' 次 · 熟练 +'+job.bonus+'%'))
+    d.append(row)
+  }
+}
+function planBox(d,place){
+  const plan=state.plan
+  if(!plan||!plan.steps||!plan.steps.length)return
+  const box=el('div','');box.className='plan-box'
+  const head=el('div','');head.className='plan-head'
+  head.append(el('b','今天的路线'))
+  const toggle=el('button',plan.autoPilot===false?'开启自动出门':'关闭自动出门')
+  toggle.onclick=()=>run({kind:'autopilot',autoPilot:plan.autoPilot===false})
+  head.append(toggle)
+  box.append(head)
+  const cur=plan.current
+  if(state.travel&&state.travel.inProgress){
+    const t=state.travel.inProgress
+    const from=(state.locations||[]).find(x=>x.id===t.from),to=(state.locations||[]).find(x=>x.id===t.to)
+    const pct=Math.round((t.progress||0)*100)
+    box.append(el('p','🚶 正在路上：'+(from?from.name:t.from)+' → '+(to?to.name:t.to)+' · '+pct+'%'+(t.reason?'（'+t.reason+'）':'')))
+  }else if(cur){
+    box.append(el('p','现在：'+cur.time+' · '+cur.locationName+' · '+cur.label))
+  }
+  const list=el('div','');list.className='plan-list'
+  plan.steps.forEach(step=>{
+    const row=el('div','');row.className='plan-row'+(step.current?' cur':'')+(step.passed?' passed':'')
+    row.append(el('span',''+step.time))
+    row.append(el('span',''+(step.current?'▶ ':'')+step.locationName))
+    row.append(el('span',''+step.label))
+    list.append(row)
+  })
+  box.append(list)
+  d.append(box)
+}
+function dailyBox(d,place){
+  const act=(label,kind,extra={})=>{const b=button(label,()=>run({id:place.id,kind,...extra}));b.disabled=busy;return b}
+  const daily=state.daily
+  if(!daily||!Array.isArray(daily.tasks))return
+  const head=el('div','');head.className='daily-head'
+  head.append(el('h3','今天的委托'))
+  const reroll=act('换一批 · 剩 '+(daily.rerollsLeft??0),'reroll-tasks',{})
+  reroll.className='ghost'
+  if(!daily.rerollsLeft)reroll.disabled=true
+  head.append(reroll)
+  d.append(head)
+  for(const task of daily.tasks){
+    const row=el('div','');row.className='task-row'+(task.done?' done':'')
+    row.append(spriteEl('notebook',24,24))
+    const info=el('div','');info.className='task-info'
+    info.append(el('b',task.title))
+    const giver=(state.npcs||[]).find(n=>n.id===task.npcId)
+    info.append(el('small',(giver?giver.name:'镇民')+' · '+(state.locations||[]).find(l=>l.id===task.locationId)?.name+' · '+task.pay+' 镇币 · '+task.minutes+' 分钟 · 精力 '+task.energy))
+    if(!task.done&&task.reason)info.append(el('small','· '+task.reason))
+    row.append(info)
+    if(task.done){const tag=el('span','已完成');tag.className='task-tag';row.append(tag)}
+    else{const b=act('接单','accept-task',{taskId:task.id});if(!task.available){b.disabled=true;b.title=task.reason||''}row.append(b)}
+    d.append(row)
+  }
+}
+function yardPanel(d,place,inside){
+  const field=state.field
+  if(!field||!Array.isArray(field.plots))return
+  d.append(el('h3','小院 · 田地'))
+  const seeds=(state.inventory||[]).filter(x=>x.seed)
+  for(const plot of field.plots){
+    const row=el('div','');row.className='furn-row'
+    const label=plot.cropId?('地'+(plot.index+1)+' · '+plot.cropName+' · '+plot.stageLabel+' · '+plot.progress+'% · 水'+plot.water):('地'+(plot.index+1)+' · 空着')
+    row.append(spriteEl(plot.stage==='empty'?'soil':(plot.stage==='ready'?'crop-'+plot.cropId:'crop-'+plot.stage),26,26),el('span',label))
+    if(plot.ready){const b=button('收获',()=>run({kind:'harvest',id:place.id,plotIndex:plot.index}));b.disabled=!inside;row.append(b)}
+    else if(!plot.cropId&&seeds.length){const b=button('种'+seeds[0].name,()=>run({kind:'plant',id:place.id,seedId:seeds[0].id,plotIndex:plot.index}));b.disabled=!inside;row.append(b)}
+    d.append(row)
+  }
+  const water=button('浇水',()=>run({kind:'water',id:place.id}));water.disabled=!inside||!field.planted;d.append(water)
+  d.append(el('small','作物按游戏时间生长（干活、休息都在推进时间），浇水会加快；能卖钱，也能吃或送人。'))
+}
+function currentHome(){const home=state.home||{};return {rooms:home.rooms||[],items:home.items||state.homeDecor||[],comfort:home.comfort||{score:0,label:'简陋',note:'',progress:0,next:null},visitor:home.visitor||null,visitCeiling:home.visitCeiling||0}}
+function roomIdOf(rooms,name){const room=(rooms||[]).find(r=>r.name===name||r.id===name);return room?room.id:null}
+function roomAt(rooms,x,y){
+  const list=rooms||[]
+  const hit=list.find(r=>x>=r.x&&x<=r.x+r.w&&y>=r.y&&y<=r.y+r.h)
+  if(hit)return hit.name
+  let best=list[0],bestD=Infinity
+  for(const r of list){const dx=x-(r.x+r.w/2),dy=y-(r.y+r.h/2),d=dx*dx+dy*dy;if(d<bestD){bestD=d;best=r}}
+  return best?best.name:'客厅'
+}
+function panelForItem(item,id,place){
+  const panel=$('object-panel');panel.replaceChildren()
+  panel.append(el('strong',item.name+'　'),el('span',(item.room||'小屋')+' · 舒适度 +'+(item.comfort||0)))
+  panel.append(button('左转',()=>run({kind:'decorate',id:place.id,item:id,decorAction:'rotate',rotation:(Number(item.rotation)||0)-15})))
+  panel.append(button('右转',()=>run({kind:'decorate',id:place.id,item:id,decorAction:'rotate',rotation:(Number(item.rotation)||0)+15})))
+  if(item.tv||item.sprite==='tv')panel.append(button('看电视',()=>openTV(item,id,place)))
+  panel.append(button('收回背包',()=>run({kind:'decorate',id:place.id,item:id,decorAction:'remove'})))
+}
+function visitorFace(visitor){
+  const face=el('div');face.className='face'
+  face.textContent=(visitor.name||'客').slice(0,1)
+  face.title=visitor.name||'客人'
+  return face
+}
+function drawHome(place,inside){
+  const stage=$('stage'),home=currentHome()
+  stage.replaceChildren();stage.classList.add('plan');stage.style.backgroundImage='none';delete stage.dataset.scene
+  const ns='http://www.w3.org/2000/svg'
+  const svg=document.createElementNS(ns,'svg')
+  svg.setAttribute('viewBox','0 0 100 100');svg.setAttribute('preserveAspectRatio','none');svg.setAttribute('class','plan')
+  const bg=document.createElementNS(ns,'rect');bg.setAttribute('width',100);bg.setAttribute('height',100);bg.setAttribute('fill','#f3ecd9');svg.append(bg)
+  for(const room of home.rooms){
+    const r=document.createElementNS(ns,'rect')
+    r.setAttribute('x',room.x);r.setAttribute('y',room.y);r.setAttribute('width',room.w);r.setAttribute('height',room.h)
+    r.setAttribute('fill',room.floor||'#d9c3a0');r.setAttribute('stroke','#8d7a5c');r.setAttribute('stroke-width',1);r.setAttribute('rx',2)
+    svg.append(r)
+    for(let i=1;i<4;i++){
+      const line=document.createElementNS(ns,'line')
+      const y=room.y+room.h*i/4
+      line.setAttribute('x1',room.x+1);line.setAttribute('y1',y)
+      line.setAttribute('x2',room.x+room.w-1);line.setAttribute('y2',y)
+      line.setAttribute('stroke','#00000012');line.setAttribute('stroke-width',0.5)
+      svg.append(line)
+    }
+    const shade=document.createElementNS(ns,'rect')
+    shade.setAttribute('x',room.x);shade.setAttribute('y',room.y);shade.setAttribute('width',room.w);shade.setAttribute('height',room.h)
+    shade.setAttribute('fill','none');shade.setAttribute('stroke','#00000018');shade.setAttribute('stroke-width',2);shade.setAttribute('rx',2)
+    svg.append(shade)
+    const t=document.createElementNS(ns,'text')
+    t.setAttribute('x',room.x+2.5);t.setAttribute('y',room.y+6);t.setAttribute('fill','#6f5f45');t.setAttribute('font-size',3.2);t.textContent=room.name
+    svg.append(t)
+  }
+  const doors=[[56.2,18,2.6,9],[56.2,64,2.6,9],[72,40.4,9,3],[22,60.4,9,3]]
+  for(const [x,y,w,h] of doors){
+    const d=document.createElementNS(ns,'rect')
+    d.setAttribute('x',x);d.setAttribute('y',y);d.setAttribute('width',w);d.setAttribute('height',h)
+    d.setAttribute('fill','#f7f1e2');d.setAttribute('rx',1.2)
+    svg.append(d)
+  }
+  stage.append(svg)
+  const scale=Math.max(0.55,Math.min(1.15,(stage.clientWidth||620)/560))
+  for(const item of home.items){
+    const n=button('',()=>{}),fp=FOOTPRINT[item.sprite||spriteGuess(item.name)]||[10,10]
+    n.className='furniture';n.title=item.name+(item.comfort?' · 舒适 +'+item.comfort:'');n.setAttribute('aria-label',item.name)
+    n.style.width=Math.round(fp[0]/100*stage.clientWidth)+'px'
+    n.style.height=Math.round(fp[1]/100*stage.clientHeight)+'px'
+    n.append(furnEl(item))
+    position(n,item.x??50,item.y??50)
+    n.style.transform='translate(-50%,-50%) rotate('+(Number(item.rotation)||0)+'deg)'
+    stage.append(n)
+    if(!inside)continue
+    const id=item.instanceId||item.id
+    let start=null
+    const point=e=>{const b=stage.getBoundingClientRect();return [Math.round((e.clientX-b.left)/b.width*100),Math.round((e.clientY-b.top)/b.height*100)].map(v=>Math.max(2,Math.min(98,v)))}
+    n.onpointerdown=e=>{if(busy)return;dragging=true;start=[e.clientX,e.clientY];n.setPointerCapture(e.pointerId)}
+    n.onpointermove=e=>{if(start)position(n,...point(e))}
+    n.onpointerup=e=>{
+      if(!start)return
+      const moved=Math.hypot(e.clientX-start[0],e.clientY-start[1])>4
+      dragging=false;start=null
+      const [x,y]=point(e)
+      if(moved)run({kind:'decorate',id:place.id,item:id,decorAction:'move',room:roomAt(home.rooms,x,y),x,y})
+      else panelForItem(item,id,place)
+    }
+    n.onpointercancel=()=>{start=null;dragging=false;draw()}
+  }
+  const field=state.field
+  if(field&&Array.isArray(field.plots)){
+    for(const plot of field.plots){
+      const key=plot.stage==='empty'?'soil':(plot.stage==='ready'?'crop-'+(plot.cropId||'tomato'):'crop-'+plot.stage)
+      const n=button('',()=>{ if(plot.ready)run({kind:'harvest',id:place.id,plotIndex:plot.index}); else $('notice').textContent=plot.cropId?(plot.cropName+' · '+plot.stageLabel+' · '+plot.progress+'% · 水'+plot.water):'这块地空着，从背包里选种子就能种下。' })
+      n.className='plot'+(plot.ready?' ready':'');n.title=plot.cropName?(plot.cropName+' '+plot.stageLabel):'空地'
+      n.append(spriteEl(key,Math.round(40*scale),Math.round(34*scale)))
+      position(n,plot.x,plot.y);stage.append(n)
+    }
+  }
+  if(home.visitor){
+    const person=el('div');person.className='person visitor';person.append(visitorFace(home.visitor))
+    position(person,46,52);stage.append(person)
+    const bubble=el('div',home.visitor.line||(home.visitor.name+'来小屋串门'));bubble.className='prop visit'
+    position(bubble,46,40);stage.append(bubble)
+  }
+  if(inside){
+    const me=el('div');me.className='person';me.append(avatar())
+    position(me,home.visitor?26:46,home.visitor?44:44);stage.append(me)
+  }
+  if(pendingItem&&inside){
+    $('notice').textContent='点平面图上想放的位置：'+pendingItem.name
+    stage.onclick=e=>{
+      if(e.target.closest('.furniture'))return
+      const b=stage.getBoundingClientRect()
+      const x=Math.max(2,Math.min(98,Math.round((e.clientX-b.left)/b.width*100)))
+      const y=Math.max(2,Math.min(98,Math.round((e.clientY-b.top)/b.height*100)))
+      const item=pendingItem;pendingItem=null;stage.onclick=null
+      run({kind:'decorate',id:place.id,item:item.id,decorAction:'place',room:roomAt(home.rooms,x,y),x,y})
+    }
+  } else stage.onclick=null
+}
+function homePanel(d,place,inside){
+  const home=currentHome(),comfort=home.comfort||{}
+  const card=el('div');card.className='comfort'
+  const head=el('div');head.className='comfort-head'
+  head.append(el('strong','舒适度 · '+(comfort.label||'简陋')),el('span',(comfort.score||0)+' 点'+(comfort.next?' → '+comfort.next:'') ))
+  card.append(head)
+  const bar=el('div');bar.className='bar';const fill=document.createElement('i')
+  fill.style.width=Math.round((Number(comfort.progress)||0)*100)+'%';bar.append(fill);card.append(bar)
+  card.append(el('small',comfort.note||''))
+  card.append(el('small',home.visitor?('👋 '+home.visitor.name+'正在做客，'+(home.visitor.line||'')):('邻居串门概率约 '+(home.visitCeiling||0)+'%，舒适度越高越常来。')))
+  d.append(card)
+  if(!state.travel?.inProgress)dailyBox(d,place)
+  const tabs=el('div');tabs.className='room-tabs'
+  const all=button('全部',()=>{activeRoom=null;draw()});if(!activeRoom)all.className='on';tabs.append(all)
+  for(const room of home.rooms){const b=button(room.name,()=>{activeRoom=room.id;draw()});if(activeRoom===room.id)b.className='on';tabs.append(b)}
+  d.append(tabs)
+  const items=home.items.filter(item=>!activeRoom||roomIdOf(home.rooms,item.room)===activeRoom)
+  d.append(el('h3','已有家具 · '+items.length+' 件'))
+  if(!items.length)d.append(el('small','这间还空着，去家具行挑一件。'))
+  for(const item of items){
+    const row=el('div');row.className='furn-row'
+    row.append(spriteEl(item.sprite||spriteGuess(item.name),26,26),el('span',item.name+' · '+(item.room||'小屋')+' · +'+(item.comfort||0)))
+    if(inside){
+      row.append(button('旋转',()=>run({kind:'decorate',id:place.id,item:item.instanceId||item.id,decorAction:'rotate',rotation:(Number(item.rotation)||0)+15})))
+      row.append(button('收回',()=>run({kind:'decorate',id:place.id,item:item.instanceId||item.id,decorAction:'remove'})))
+    }
+    d.append(row)
+  }
+  const owned=(state.inventory||[]).filter(item=>item.decor)
+  d.append(el('h3','随身可布置 · '+owned.length+' 件'))
+  if(!owned.length)d.append(el('small','背包里没有家具，商店买来的沙发、灯、地毯都能布置。'))
+  for(const item of owned){
+    const row=el('div');row.className='furn-row owned'
+    row.append(spriteEl(item.sprite||spriteGuess(item.name),26,26),el('span',item.name))
+    if(inside){const b=button('布置',()=>{pendingItem=item;draw()});row.append(b)}
+    d.append(row)
+  }
+  if(inside){
+    yardPanel(d,place,inside)
+    const acts=el('div');acts.className='choices'
+    for(const action of ['在客厅歇一会儿','在小书桌写日记','给窗边的花浇水']){
+      const b=button(action,()=>run({kind:'act',id:place.id,action}));b.disabled=busy;acts.append(b)
+    }
+    d.append(acts)
+  }
+}
+function giftBox(npc,place){
+  const box=el('div');box.className='choices'
+  const items=(state.inventory||[]).slice(-3)
+  if(!items.length){box.append(el('small','背包里还没有可以送出的东西。'));return box}
+  box.append(el('small','送点什么给'+npc.name+'：'))
+  for(const item of items){
+    const b=button('赠送'+item.name,()=>run({kind:'npc-gift',id:place.id,npcId:npc.id,item:item.id}))
+    b.disabled=busy;box.append(b)
+  }
+  return box
+}
+const shelfPage={}
+function drawShelf(stage,shop,closed,onItem){
+  const items=shop.items||[]
+  const perPage=15,pages=Math.max(1,Math.ceil(items.length/perPage))
+  const page=Math.min(pages-1,Math.max(0,shelfPage[shop.id]||0));shelfPage[shop.id]=page
+  const wrap=el('div');wrap.className='shelf'+(closed?' closed':'')
+  const head=el('div');head.className='shelf-head'
+  head.append(el('strong','展示柜 · '+(shop.name||'小店')),el('small','共 '+items.length+' 件'+(closed?'　·　已打烊，明天再来':'')))
+  wrap.append(head)
+  const body=el('div');body.className='shelf-body'
+  const slice=items.slice(page*perPage,(page+1)*perPage)
+  for(let r=0;r<3;r++){
+    const row=el('div');row.className='shelf-row'
+    for(let c=0;c<5;c++){
+      const item=slice[r*5+c]
+      const cell=el('button');cell.className='cell'
+      if(!item){cell.classList.add('empty');cell.disabled=true;row.append(cell);continue}
+      cell.append(spriteEl(item.sprite||spriteGuess(item.name),34,34),el('small',item.name),el('b',item.price+' 币'))
+      if(closed)cell.classList.add('shut')
+      cell.onclick=()=>onItem(item)
+      row.append(cell)
+    }
+    body.append(row)
+  }
+  wrap.append(body)
+  if(pages>1){const foot=el('div');foot.className='shelf-foot';foot.append(button('◀ 上一格',()=>{shelfPage[shop.id]=page-1;draw()}),el('small',(page+1)+' / '+pages),button('下一格 ▶',()=>{shelfPage[shop.id]=page+1;draw()}));wrap.append(foot)}
+  stage.append(wrap)
+}
+function openTV(item,id,place){
+  const panel=$('object-panel')
+  panel.replaceChildren(el('strong','旧电视'),el('small','正在拉节目单…'))
+  fetch('/tv').then(r=>r.json()).catch(()=>({ok:false,videos:[]})).then(feed=>{
+    panel.replaceChildren()
+    const head=el('div');head.className='card-head';head.append(spriteEl('tv',62,62))
+    const meta=el('div');meta.className='card-meta';meta.append(el('strong','旧电视'))
+    meta.append(el('small',feed.source==='local'?'镇上点播台 · B 站暂时没信号':('节目单来自 B 站 · 刚刚拉的')))
+    head.append(meta);panel.append(head)
+    const list=el('div');list.className='tv-list'
+    for(const v of (feed.videos||[]).slice(0,6)){
+      const card=el('div');card.className='tv-card'
+      card.append(el('b',v.title),el('small',[v.author,v.duration,v.views?('播放 '+Math.round(v.views/10000)+' 万'):''].filter(Boolean).join(' · ')))
+      if(v.desc)card.append(el('small',v.desc))
+      const acts=el('div');acts.className='choices'
+      const w=button('在电视上看 20 分钟',()=>run({kind:'watch-tv',id:place.id,video:{bvid:v.bvid,title:v.title,url:v.url}}));w.className='primary';acts.append(w)
+      if(v.url)acts.append(button('在新标签打开',()=>window.open(v.url,'_blank','noopener')))
+      card.append(acts);list.append(card)
+    }
+    panel.append(list,button('移开视线',()=>panel.replaceChildren()))
+  })
+}
+function drawRoom(place,inside){
+ const stage=$('stage'),panel=$('object-panel'),cell=cells[place.id]
+ stage.classList.remove('plan');stage.replaceChildren();panel.replaceChildren();if(stage.dataset.scene!==place.id){stage.dataset.scene=place.id;stage.style.backgroundImage='url('+sceneRoot+place.id+'.webp)'
+   const probe=new Image();probe.onerror=()=>{missingScenes.add(place.id);if(stage.dataset.scene===place.id&&!stage.querySelector('.scenemissing')){const tip=el('div');tip.className='scenemissing';tip.textContent='这个地点还没有场景画 · 把 '+place.id+'.webp 放进 lib/scenes/ 就会显示';stage.append(tip)}};probe.src=sceneRoot+place.id+'.webp'}
+ if(missingScenes.has(place.id)&&!stage.querySelector('.scenemissing')){const tip=el('div');tip.className='scenemissing';tip.textContent='这个地点还没有场景画 · 把 '+place.id+'.webp 放进 lib/scenes/ 就会显示';stage.append(tip)}
+ const commands=activities[place.id]||['在附近走走']
+ const shop=state.shops?.find(s=>(s.locationId||s.id)===place.id)
+ const dispatch=(kind,extra)=>run({kind,id:place.id,...extra})
+ const closed=!!(state.openHours&&state.openHours[place.id]===false)
+ function itemCard(item){
+  inspected=null;panel.replaceChildren()
+  const head=el('div');head.className='card-head';head.append(spriteEl(item.sprite||spriteGuess(item.name),66,66))
+  const meta=el('div');meta.className='card-meta'
+  meta.append(el('strong',item.name),el('small',item.price+' 镇币'+(item.comfort?'　舒适 +'+item.comfort:'')+(item.energy?'　精力 +'+item.energy:'')+(item.mood?'　心情 +'+item.mood:'')))
+  if(item.decor)meta.append(el('small','家具 · 买回小屋可以布置'))
+  if(item.seed)meta.append(el('small','种子 · 种到小院'))
+  if(item.food||item.energy)meta.append(el('small','吃的 · 回一点精力和心情'))
+  head.append(meta);panel.append(head)
+  if(inside){const bb=button(closed?'打烊了':'买下 · '+item.price+' 镇币',()=>dispatch('buy',{item:item.id}));bb.className='primary';if(closed){bb.disabled=true;bb.title='这家店已经打烊了，明天再来'}panel.append(bb)}
+  else panel.append(el('small','走进店里才能买'))
+  panel.append(button('放回去',()=>panel.replaceChildren()))
+ }
+ function show(index){
+  inspected=index;panel.replaceChildren()
+  const prop=objects[cell]?.[index];if(!prop)return
+  panel.append(el('strong',prop[0]+'　'))
+  const action=commands[index]
+  if(inside&&action)panel.append(button(action,()=>dispatch('act',{action})))
+  if(!inside)panel.append(el('span','地点预览'))
+ }
+ if(shop)drawShelf(stage,shop,closed,itemCard)
+ else for(const [index,[name,x,y]] of (objects[cell]||[]).entries()){
+  const n=button(name,()=>show(index));n.className='prop';position(n,x,y);stage.append(n)
+ }
+ if(inspected!==null)show(inspected)
+ const bottomY=shop?26:85
+ if(inside){const n=el('span');n.className='person';n.append(avatar());position(n,shop?87:49,bottomY);stage.append(n)}
+ for(const [index,npc] of (state.npcs||[]).filter(n=>n.locationId===place.id).entries()){
+  const n=button(npc.name,()=>{panel.replaceChildren(el('span',npc.activity||npc.name));if(inside)panel.append(button('聊几句',()=>dispatch('npc-talk',{npcId:npc.id,text:'在'+place.name+'见面'})))})
+  n.className='prop';position(n,18+index*16,bottomY);stage.append(n)
+ }
+ if(place.id!=='fish-home')return
+ for(const item of state.homeDecor||[]){
+   const id=item.instanceId||item.id
+   const n=button('',()=>{});n.append(spriteEl(item.sprite||spriteGuess(item.name)))
+   n.title=item.name;n.setAttribute('aria-label',item.name);n.className='furniture';position(n,item.x??50,item.y??50)
+   n.style.transform='translate(-50%,-50%) rotate('+(Number(item.rotation)||0)+'deg)'
+   stage.append(n);if(!inside)continue
+   let start=null
+   n.onpointerdown=e=>{if(busy)return;dragging=true;start=[e.clientX,e.clientY];n.setPointerCapture(e.pointerId)}
+   function point(e){const b=stage.getBoundingClientRect();return [Math.round((e.clientX-b.left)/b.width*100),Math.round((e.clientY-b.top)/b.height*100)].map(v=>Math.max(2,Math.min(98,v)))}
+   n.onpointermove=e=>{if(start)position(n,...point(e))}
+   n.onpointerup=e=>{if(!start)return;const moved=Math.hypot(e.clientX-start[0],e.clientY-start[1])>4;dragging=false;start=null;if(moved){const [x,y]=point(e);dispatch('decorate',{item:id,decorAction:'move',room:item.room,x,y})}else{panel.replaceChildren(el('span',item.name),button('旋转',()=>dispatch('decorate',{item:id,decorAction:'rotate',rotation:(item.rotation||0)+15})),button('收回',()=>dispatch('decorate',{item:id,decorAction:'remove'})))}}
+   n.onpointercancel=()=>{start=null;dragging=false;draw()}
+ }
+}
+async function run(payload){if(busy)return;busy=true;revision++;draw();try{const r=await fetch('/action',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const v=await r.json();if(!r.ok)throw Error(v.error);state=v;$('notice').textContent=v.noticeText||('已记录'+({travel:'本次步行',buy:'本次购买',act:'本次活动',work:'工作',decorate:'房屋布置','npc-talk':'聊天','npc-gift':'送礼'}[payload.kind]||'操作'))}catch(e){$('notice').textContent=e.message}finally{busy=false;draw()}}
+async function poll(){const version=revision;try{if(busy||dragging)return;const r=await fetch('/state');if(!r.ok)throw Error();const next=await r.json();if(version!==revision||dragging)return;if(JSON.stringify(next)!==JSON.stringify(state)){state=next;draw()}$('sync').textContent='● 已同步 '+new Date().toLocaleTimeString()}catch{$('sync').textContent='连接中断 · 正在重试'}finally{setTimeout(poll,Math.max(1,Number(window.TOWN_REFRESH_SECONDS||2))*1000)}}poll()
+</script></html>
