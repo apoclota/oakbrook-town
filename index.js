@@ -1,5 +1,5 @@
 import { dashboardUrl, startDashboard } from './lib/dashboard.mjs'
-import { npcGift, DEFAULT_FILE, status, event, act, enter, travel, buy, decorate, work, weather, npcTalk, eventSuggestion, rest, eat, sell, plant, waterField, harvest, jobsAt, JOBS, dailyView, rerollTasks, acceptTask } from './lib/state.mjs'
+import { npcGift, DEFAULT_FILE, status, event, act, enter, travel, buy, decorate, work, weather, npcTalk, eventSuggestion, rest, eat, sell, plant, waterField, harvest, jobsAt, JOBS, dailyView, rerollTasks, acceptTask, watchTV } from './lib/state.mjs'
 import { loadHostDeps } from './lib/hostdeps.mjs'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -193,6 +193,7 @@ export function apply(ctx, config = {}) {
   reg({ name: 'town_life_npc_gift', description: '把背包里的一件东西送给小镇居民，按喜好提升好感度并返回对方反应。', parameters: { type: 'object', required: ['npcId', 'itemId'], properties: { npcId: { type: 'string' }, itemId: { type: 'string' } }, additionalProperties: false } }, async ({ npcId, itemId }) => npcGift(config, npcId, itemId))
   reg({ name: 'town_life_event_suggestion', description: '根据现实时间、天气和地点给出一条正在流动的生活事件建议。', parameters: { type: 'object', properties: {}, additionalProperties: false } }, async () => eventSuggestion(config))
   reg({ name: 'town_life_weather', description: '读取成都城市级天气状态；未接入真实天气服务时会明确标注占位。', parameters: { type: 'object', properties: {}, additionalProperties: false } }, async () => weather(config))
+  reg({ name: 'town_life_watch_tv', description: '在小屋看电视：旧电视开着，选一条节目看 20 分钟（心情 +6）。可以传 title 指定节目，不传就随意看一集。', parameters: { type: 'object', properties: { title: { type: 'string' }, bvid: { type: 'string' }, url: { type: 'string' } }, additionalProperties: false } }, async (args = {}) => { const t = watchTV(config, { title: args.title, bvid: args.bvid, url: args.url }); return { ok: t.ok, minutes: t.minutes, mood: t.state.mood, activity: t.state.activity && t.state.activity.label } })
   try { off.push(registerPrompt(ctx)) } catch (error) { console.error('橡溪镇语气提示注入失败（不影响插件本身）', error && error.message) }
   try { registerSettingsRoutes(ctx) } catch (error) { console.error('橡溪镇设置接口注册失败（不影响插件本身）', error && error.message) }
   return () => off.forEach(fn => { try { fn?.() } catch {} })
