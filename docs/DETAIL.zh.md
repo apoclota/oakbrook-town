@@ -60,3 +60,12 @@ MIT License.
 - 存档文件不存在时，`readState` 捕获 `ENOENT`：用包内 `lib/seed-town.json` 建一份（目录一并创建），然后照常运行；首次打开地图不会是 400。
 - `fileOf(config)` 在没有 `stateFile` 时落到 `DEFAULT_FILE`：`DSH_TOWN_LIFE_FILE` → `$DSH_HOME/town-life.json` → `~/.dsh/town-life.json`，不再写死某台机器的路径。
 - 初始存档是「第一天」状态：位置在家、320 小镇币、背包与家具空、没有约定和彩票记录。删掉 JSON 即可重开。
+
+## 活动时间与饥饿度（1.11.4）
+
+- **时间帧统一**：`activity.startedAt/endsAt` 一律存真实时钟（配合 `MINUTE_MS` 的压缩时长）。旧存档里如果有按「游戏时间」（真实时间 + `clockOffset`）写过的记录，`activityRealEndMs` 会识别并换算回真实帧，`tickWorld` 顺手把换算结果落盘，只做一次。
+- **remainMinutes**：`activityRemainMinutes` 从换算后的结束时间算，一顿 30 分钟的饭就显示「还剩 30 分钟」，不再出现一千多分钟、也不真卡两个半小时。
+- **忙碌判断**：`work/rest/eat/watchTV/hungerTick/pilotTick` 统一用 `activityBusy` / `activityDone`，不会再出现「看起来在忙、实际不动」的分歧。
+- **饥饿度按游戏时钟**：吃饭时同时记 `lastMealAt`（真实）和 `lastMealGameAt`（游戏）；`fullnessOf` 优先用游戏时钟，所以干活/看电视推进的 `clockOffset` 也会让她慢慢饿起来。旧存档没有 `lastMealGameAt` 时回落到真实时间口径。
+- **吃完才算吃过**：meal 结算时写 `lastMealAt`，避免结算完立刻又饿、当场再点一顿。
+- **初始存档**：`seed-town.json` 的 `clockOffset` 是 0，新机器第一次启动的游戏时间就是本地时间。

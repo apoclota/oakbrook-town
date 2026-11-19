@@ -1113,7 +1113,7 @@
   },
   "lastEvent": null,
   "lastAction": null,
-  "updatedAt": "2026-11-19T12:48:41.647Z",
+  "updatedAt": "2026-11-19T13:20:43.667Z",
   "relationships": {},
   "homeDecor": [],
   "npcs": [],
@@ -1167,7 +1167,7 @@
   "lastVisit": null,
   "homeVisitor": null,
   "field": null,
-  "lastClockAt": "2026-11-19T12:34:47.486Z",
+  "lastClockAt": null,
   "daily": null,
   "plan": null,
   "nightWarning": null,
@@ -1183,8 +1183,8 @@
   "appointments": [],
   "activity": null,
   "lastMealAt": null,
-  "lastApptMeal": "a-pmwnclxkk",
-  "clockOffset": 150,
+  "lastApptMeal": null,
+  "clockOffset": 0,
   "lastResult": null,
   "media": null
 }

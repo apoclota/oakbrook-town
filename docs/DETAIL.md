@@ -40,3 +40,12 @@ MIT License.
 - If the save file is missing, `readState` catches `ENOENT`, creates it from the bundled `lib/seed-town.json` (directories included), and continues; the dashboard never starts with a 400.
 - `fileOf(config)` falls back to `DEFAULT_FILE`: `DSH_TOWN_LIFE_FILE` → `$DSH_HOME/town-life.json` → `~/.dsh/town-life.json` — no machine-specific path.
 - The seed save is a clean "day one": at home, 320 coins, empty bag and rooms, no appointments or tickets.
+
+## Activity clock and hunger (1.11.4)
+
+- **One time frame**: `activity.startedAt/endsAt` are always real-clock values (paired with the compressed `MINUTE_MS` duration). Legacy saves that stored game-clock values (real + `clockOffset`) are detected by `activityRealEndMs`, converted back, and the conversion is persisted once by `tickWorld`.
+- **remainMinutes** comes from the converted end time, so a 30-minute meal shows "30 minutes left" instead of 1,500 and does not really block for 2.5 hours.
+- **Busy checks** (`work`/`rest`/`eat`/`watchTV`/`hungerTick`/`pilotTick`) share `activityBusy`/`activityDone`, so view and settlement never disagree.
+- **Hunger follows the game clock**: meals record both `lastMealAt` (real) and `lastMealGameAt` (game); `fullnessOf` prefers the game one, so clock advances from work/TV make her hungry again. Saves without `lastMealGameAt` fall back to real time.
+- **Meals are counted when finished**: the meal settlement writes `lastMealAt`, avoiding an instant second meal.
+- **Seed save** has `clockOffset: 0`, so a fresh install starts at local time.

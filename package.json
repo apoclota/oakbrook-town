@@ -1,6 +1,6 @@
 {
   "name": "dsh-town-life",
-  "version": "1.11.3",
+  "version": "1.11.4",
   "private": true,
   "type": "module",
   "description": "橡溪镇主角生活线：可从 DSH 简介和设置进入实时地图，查看地点、商店、货币与 NPC，并进行旅行、购物、对话、工作和小屋自由装修；与主角共享本地状态。",
