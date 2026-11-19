@@ -4,6 +4,7 @@
       name: 'dsh-town-life'
       config:
         enabled: true
+        stateFile: 'Z:/小镇的一生0.1/tools/town-life/town-life.json'
         eventMode: 'daily'
         allowFreeActions: true
         weatherCity: '成都'

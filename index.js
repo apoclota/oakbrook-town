@@ -121,6 +121,14 @@ function townPromptLine() {
   } else if (appts.length > 1) {
     parts.push('今天和你约了 ' + appts.map(a => a.time + ' ' + a.locationName + (a.treats ? '（你请客）' : '')).join('、') + '。')
   }
+  if (!s.activity && s.planStep && String(s.planStep).startsWith('a-') && s.plan && Array.isArray(s.plan.steps)) {
+    const step = s.plan.steps.find(x => x && x.id === s.planStep)
+    if (step && step.appointment) parts.push('她提前到了' + step.locationName + '，正在等你' + step.time + ' 的约定。')
+  }
+  if (!s.activity && s.planStep && String(s.planStep).startsWith('a-') && s.plan && Array.isArray(s.plan.steps)) {
+    const step = s.plan.steps.find(x => x && x.id === s.planStep)
+    if (step && step.appointment) parts.push('她提前到了' + step.locationName + '，正在等你' + step.time + ' 的约定。')
+  }
   if (s.activity) parts.push('她正在' + s.activity.label + '，还剩 ' + s.activity.remainMinutes + ' 分钟（这段时间也可以聊天，只是手上忙着）。')
   if (s.daily && Array.isArray(s.daily.tasks)) {
     const left = s.daily.tasks.filter(t => !t.done).length
