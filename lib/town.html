@@ -85,6 +85,14 @@ button.ghost{background:none;border:1px solid #cbbfa6;color:#6f5f45}
 .activity{margin:6px 0;padding:8px 10px;border-radius:10px;background:#f6eeda;border:1px solid #e0d3b6}
 .activity .bar{margin:5px 0;height:6px;border-radius:3px;background:#e5dcc8;overflow:hidden}
 .activity .bar i{display:block;height:100%;background:#c08a4a}
+ .actbadge{position:absolute;left:50%;top:8px;transform:translateX(-50%);z-index:6;background:rgba(26,34,29,.82);color:#f7f0dc;padding:5px 12px;border-radius:14px;font-size:12px;max-width:74%;text-align:center;line-height:1.5;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+ .actbadge b{font-weight:600}
+ .actbar{margin:4px 0 0;height:3px;border-radius:2px;background:rgba(255,255,255,.28);overflow:hidden}
+ .actbar i{display:block;height:100%;background:#e2b04a;transition:width .35s linear}
+ .special-box{margin:8px 0;padding:9px 11px;border-radius:10px;background:#efe7f6;border:1px solid #cdbde4}
+ .special-box b{color:#6a4a90}
+ .special-box p{margin:4px 0 2px;font-size:13px}
+ .special-box small{color:#7b639b}
 .job-row{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:8px;align-items:center;padding:4px 0;border-bottom:1px dashed #e6ddc9}
 .plot{position:absolute;transform:translate(-50%,-50%);border-radius:8px;padding:2px;background:transparent;border:none;cursor:pointer}
 .plot.ready{box-shadow:0 0 0 2px #d9a53b inset}
@@ -423,6 +431,14 @@ function statusStrip(d,place){
   box.append(el('span','镇币 '+(state.coins??0)))
   d.append(box)
   if(tone.voice)d.append(el('p','此刻的她：'+tone.voice))
+  if(state.specialEvent&&!state.specialEvent.resolvedAt){
+    const sp=el('div');sp.className='special-box'
+    sp.append(el('b','✦ 她想第一个告诉你：'+state.specialEvent.title))
+    sp.append(el('p',state.specialEvent.text))
+    const where=[state.specialEvent.locationName?'在'+state.specialEvent.locationName:'',state.specialEvent.npcName?'和'+state.specialEvent.npcName+'有关':''].filter(Boolean).join('，')
+    sp.append(el('small',(where?where+' · ':'')+'你可以在对话里问她细节，她会记着这件事。'))
+    d.append(sp)
+  }
   const act=state.activity
   if(act){
     const row=el('div','');row.className='activity'
@@ -787,6 +803,19 @@ function openTV(item,id,place){
     panel.append(list,button('移开视线',()=>panel.replaceChildren()))
   })
 }
+function activityBadge(stage){
+  const act=state.activity
+  if(!act)return
+  const n=el('div');n.className='actbadge'
+  const left=Math.max(0,Number(act.remainMinutes||0))
+  n.append(el('b','⏳ 正在'+act.label+' · 还剩 '+left+' 分钟'))
+  const bar=el('div');bar.className='actbar'
+  const fill=document.createElement('i')
+  const pct=act.minutes?100-(left/Number(act.minutes))*100:6
+  fill.style.width=Math.max(4,Math.min(100,pct))+'%'
+  bar.append(fill);n.append(bar)
+  stage.append(n)
+}
 function drawRoom(place,inside){
  const stage=$('stage'),panel=$('object-panel'),cell=cells[place.id]
  stage.classList.remove('plan');stage.replaceChildren();panel.replaceChildren();if(stage.dataset.scene!==place.id){stage.dataset.scene=place.id;stage.style.backgroundImage='url('+sceneRoot+place.id+'.webp)'
@@ -824,6 +853,7 @@ function drawRoom(place,inside){
  if(inspected!==null)show(inspected)
  const bottomY=shop?26:85
  if(inside){const n=el('span');n.className='person';n.append(avatar());position(n,shop?87:49,bottomY);stage.append(n)}
+ if(inside)activityBadge(stage)
  for(const [index,npc] of (state.npcs||[]).filter(n=>n.locationId===place.id).entries()){
   const n=button(npc.name,()=>{panel.replaceChildren(el('span',npc.activity||npc.name));if(inside)panel.append(button('聊几句',()=>dispatch('npc-talk',{npcId:npc.id,text:'在'+place.name+'见面'})))})
   n.className='prop';position(n,18+index*16,bottomY);stage.append(n)

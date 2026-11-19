@@ -49,3 +49,12 @@ MIT License.
 - **Hunger follows the game clock**: meals record both `lastMealAt` (real) and `lastMealGameAt` (game); `fullnessOf` prefers the game one, so clock advances from work/TV make her hungry again. Saves without `lastMealGameAt` fall back to real time.
 - **Meals are counted when finished**: the meal settlement writes `lastMealAt`, avoiding an instant second meal.
 - **Seed save** has `clockOffset: 0`, so a fresh install starts at local time.
+
+## Weather, meal anticipation and special events (1.12.0)
+
+- `weatherInfo(state)` normalises WMO codes (`61`, `63`, …) and cached Chinese descriptions (`晴`, `小雨`) into `{ text, rain, snow, cold, hot, outdoor }`; `weatherText` renders one Chinese sentence.
+- Route planning skips `OUTDOOR_PLACES` on rainy/snowy/cold days and prefers indoor shade between 11:00 and 15:00 on hot days; the plan signature carries a weather tag so weather changes re-plan the day.
+- `MEAL_ANCHORS = [12:10, 18:30]`; `hungerTick` starts a meal up to an hour before the anchor when fullness < 68 ("快到饭点了"), or immediately below `HUNGRY_AT = 25`.
+- The map's interior scene shows an `activityBadge` with the current activity, remaining minutes and a progress bar; legacy saves written on the game clock are converted by `activityRealEndMs`.
+- `SPECIAL_EVENTS` (14 small events) are surfaced by `ensureSpecialEvent` from `tickWorld`: first schedule fires after 15 game minutes, then every 110–190 game minutes. She tells you first; unresolved events expire after 240 game minutes into `state.specialEvents`. `resolveSpecialEvent(config, { action })` records the outcome, grants mood/coins and +2 affection for the related resident.
+- `EXTRA_EVENTS` adds 4–5 more entries to the daily/occasional/sudden pools; `ensureTown` merges them into existing saves.

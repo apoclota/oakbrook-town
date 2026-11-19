@@ -1,5 +1,5 @@
 import { dashboardUrl, startDashboard } from './lib/dashboard.mjs'
-import { npcGift, DEFAULT_FILE, status, event, act, enter, travel, buy, decorate, work, weather, npcTalk, eventSuggestion, rest, eat, sell, plant, waterField, harvest, jobsAt, JOBS, dailyView, rerollTasks, acceptTask, watchTV, invite, dineAt, cancelAppointment, treat, buyLottery, lotteryView } from './lib/state.mjs'
+import { npcGift, DEFAULT_FILE, status, event, act, enter, travel, buy, decorate, work, weather, npcTalk, eventSuggestion, resolveSpecialEvent, rest, eat, sell, plant, waterField, harvest, jobsAt, JOBS, dailyView, rerollTasks, acceptTask, watchTV, invite, dineAt, cancelAppointment, treat, buyLottery, lotteryView } from './lib/state.mjs'
 import { loadHostDeps } from './lib/hostdeps.mjs'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -125,6 +125,10 @@ function townPromptLine() {
     const step = s.plan.steps.find(x => x && x.id === s.planStep)
     if (step && step.appointment) parts.push('她提前到了' + step.locationName + '，正在等你' + step.time + ' 的约定。')
   }
+  if (s.specialEvent && !s.specialEvent.resolvedAt) {
+    parts.push('她今天遇到一件特别的事，想第一个告诉你：' + s.specialEvent.title + '——' + s.specialEvent.text + '（' + (s.specialEvent.locationName ? '在' + s.specialEvent.locationName + '，' : '') + (s.specialEvent.npcName ? '和' + s.specialEvent.npcName + '有关，' : '') + '你可以问她细节，或者用 town_life_special_event 记下你们怎么处理）')
+  }
+  if (s.weatherEffect) parts.push(s.weatherEffect)
   if (s.activity) parts.push('她正在' + s.activity.label + '，还剩 ' + s.activity.remainMinutes + ' 分钟（这段时间也可以聊天，只是手上忙着）。')
   if (s.daily && Array.isArray(s.daily.tasks)) {
     const left = s.daily.tasks.filter(t => !t.done).length
@@ -189,6 +193,7 @@ export function apply(ctx, config = {}) {
   const off = [stopDashboard]
   const reg = (spec, execute) => off.push(ctx.tools.register(defineTool({ ...spec, execute })))
   reg({ name: 'town_life_status', description: '读取橡溪镇主角的当前状态：地点、精力、心情、饱食度、镇币、正在做的事、能干的活和小院田地；返回里的 tone.hint 说明她此刻说话该是什么口气（精力越低越短、越疲），请照此调整语气。只读。', parameters: { type: 'object', properties: {}, additionalProperties: false } }, async () => status(config))
+  reg({ name: 'town_life_special_event', description: '回应她主动跟你说的特别事件：她把今天遇到的一件小事讲给你听，你记下你们怎么处理的（她会记得，心情也会好一点）。先看状态里的 specialEvent，没有就不用调用。', parameters: { type: 'object', properties: { action: { type: 'string', description: '你们是怎么处理的，比如「陪她一起把小狗送回邮局」' } }, required: [], additionalProperties: false } }, async args => resolveSpecialEvent(activeConfig, args || {}))
   reg({ name: 'town_life_event', description: '推进一次生活线事件；daily 按当天选择每日或偶然事件，surprise 选择突发事件。', parameters: { type: 'object', properties: { kind: { type: 'string', enum: ['daily', 'surprise'], default: 'daily' } }, additionalProperties: false } }, async ({ kind = 'daily' }) => event(config, kind === 'surprise' ? 'surprise' : 'tick'))
   reg({ name: 'town_life_act', description: '记录你或主角选择的自由行动，并结束当前事件。', parameters: { type: 'object', required: ['action'], properties: { action: { type: 'string', minLength: 1, maxLength: 200 } }, additionalProperties: false } }, async ({ action }) => act(config, action))
   reg({ name: 'town_life_enter', description: '进入或入住小镇地点；进入水边小屋后可布置、休息和工作。', parameters: { type: 'object', required: ['locationId'], properties: { locationId: { type: 'string' } }, additionalProperties: false } }, async ({ locationId }) => enter(config, locationId))

@@ -69,3 +69,27 @@ MIT License.
 - **饥饿度按游戏时钟**：吃饭时同时记 `lastMealAt`（真实）和 `lastMealGameAt`（游戏）；`fullnessOf` 优先用游戏时钟，所以干活/看电视推进的 `clockOffset` 也会让她慢慢饿起来。旧存档没有 `lastMealGameAt` 时回落到真实时间口径。
 - **吃完才算吃过**：meal 结算时写 `lastMealAt`，避免结算完立刻又饿、当场再点一顿。
 - **初始存档**：`seed-town.json` 的 `clockOffset` 是 0，新机器第一次启动的游戏时间就是本地时间。
+
+## 天气、饭点与特别事件（1.12.0）
+
+### 天气影响日程
+`weatherInfo(state)` 把在线天气（WMO 码，如 `61`）和缓存里的中文描述（如 `晴`）都归一成 `{ text, rain, snow, cold, hot, outdoor }`：
+- 雨/雪/冷天：排路线时跳过 `OUTDOOR_PLACES`（湖镜湖·芦苇湾），原来固定的散步段会换成室内地点
+- 热天（≥30°C）：11:00–15:00 只挑室内遮阴的地方
+- 路线签名（`plan.sig`）里带天气标记，天气一变路线就重排
+- `status` 另外返回 `weatherEffect`（一句中文说明）和 `weatherInfo`
+
+### 饭点前提前饿
+`MEAL_ANCHORS = [12:10, 18:30]`。`hungerTick` 在饭点前一小时到一小时后之间（且饱食度 <68）也会去吃，文案用「快到饭点了」；真正饿坏了（<25）才用「饿坏了」。优先级：深夜回家 → 和你约好的事 → 饿了先吃饭 → 日常日程。
+
+### 地图上的活动进度
+网页室内场景里，人物上方会显示 `⏳ 正在<做了什么> · 还剩 N 分钟` 和一条进度条（`activityBadge`）。`remainMinutes` 由 `activityRemainMinutes` 按真实时钟算，旧存档里用游戏时钟写的活动会被自动换算。
+
+### 特别事件
+- `SPECIAL_EVENTS` 14 条（跟着她走的小狗、来历不明的明信片、老硬币、木匠师傅的边角料、玛尔塔的新蛋糕、图书馆的铜钥匙、小猫、彩票小礼物、花店剩花、傍晚钢琴、雨中共伞、邮票交换、工作室的锯末、钢琴课）
+- `ensureSpecialEvent` 由 `tickWorld` 每轮检查：第一次先登记 `nextSpecialAt = 现在 + 15 分钟（游戏时间）`，之后每 110–190 分钟游戏时间冒一件，写进 `state.specialEvent` 并落到 `lastAction`
+- 240 分钟游戏时间内没人接话，她会自己处理掉，记进 `state.specialEvents`（标 `expired`）
+- `resolveSpecialEvent(config, { action })` 记录你们的处理方式，按事件给心情/镇币，相关居民好感 +2，保留最近 24 条
+- `status` 返回 `specialEvent`（当前这件）和 `specialEvents`（最近 3 条历史）
+- 提示词里会主动告诉她「她今天遇到一件特别的事，想第一个告诉你」，模型应当直接转述，并可用 `town_life_special_event` 回应
+- `EXTRA_EVENTS` 给每日/偶然/突发各加了 4–5 条，`ensureTown` 会自动合并进旧存档
