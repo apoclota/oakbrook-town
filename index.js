@@ -125,10 +125,6 @@ function townPromptLine() {
     const step = s.plan.steps.find(x => x && x.id === s.planStep)
     if (step && step.appointment) parts.push('她提前到了' + step.locationName + '，正在等你' + step.time + ' 的约定。')
   }
-  if (!s.activity && s.planStep && String(s.planStep).startsWith('a-') && s.plan && Array.isArray(s.plan.steps)) {
-    const step = s.plan.steps.find(x => x && x.id === s.planStep)
-    if (step && step.appointment) parts.push('她提前到了' + step.locationName + '，正在等你' + step.time + ' 的约定。')
-  }
   if (s.activity) parts.push('她正在' + s.activity.label + '，还剩 ' + s.activity.remainMinutes + ' 分钟（这段时间也可以聊天，只是手上忙着）。')
   if (s.daily && Array.isArray(s.daily.tasks)) {
     const left = s.daily.tasks.filter(t => !t.done).length
@@ -142,6 +138,8 @@ function townPromptLine() {
   }
   parts.push('说话口气按这个来：' + (tone.voice || '正常') + '。' + (tone.hint || ''))
   if (s.fullness?.hint) parts.push(s.fullness.hint)
+  if (s.fullness && Number(s.fullness.value) < 25) parts.push('她已经饿坏了，会自己先放下日程去吃饭（背包里有吃的先吃，在餐厅就点一顿，在家就自己做）。')
+  parts.push('当对方说「今天/晚上请你吃饭」「请你吃饭」「请你吃个饭」这类的话，直接调用 town_life_treat，不用问时间——她自己挑午饭或晚饭并写进日程；对方指定了地方或时间就用 town_life_invite。')
   return parts.join('')
 }
 function registerPrompt(ctx) {

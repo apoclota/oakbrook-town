@@ -46,3 +46,11 @@ MIT License.
 - `town_life_dine({ treats })`：在餐厅坐下吃 30 分钟。`treats=true` 时不扣钱；否则扣 `MEAL_COST = 30` 镇币、心情 +10。
 - `town_life_appointments({ apptId, cancel })`：列出今天的约定，传 `apptId` + `cancel:true` 取消并立刻重排日程。
 - 网页路线面板把约定段标成 ♥ 并注明「你请客」；`/state` 的 `plan.appointments` 里带 `time` / `untilTime`。
+
+## 饥饿优先（1.11.2）
+
+- `hungerTick(state, now, minute)`：在每个 tick 的 `pilotTick` 里被调用，判断顺序是「夜深回家 → 和你约好的事 → 饿了先吃饭 → 日常日程」，所以约定优先于饥饿、饥饿优先于普通日程。
+- 触发阈值 `HUNGRY_AT = 25`（`fullnessOf` 的 value，0–100；低于 25 就是「饿了」到「饿坏了」）。
+- 吃什么按场景决定：背包里有可吃的东西（`item.food` / `edible` / 面包蛋糕饼咖啡茶壶 sprite）就直接吃掉；人在橡溪餐厅且营业就点一顿 30 分钟的饭，钱够扣 `MEAL_COST = 30`，不够就白吃；在家就自己做 20 分钟（精力 +12、心情 +4、不花钱）；都不满足就先走去餐厅（打烊则回家）。
+- 吃完会写 `state.lastMealAt`，`fullnessOf` 用它算饱食度；`lastMealAt` 缺失时按「10 小时没吃」估算（此前会把 1970 年当上次吃饭，导致 hours 数值巨大）。
+- 提示词会补一句「她已经饿坏了，会自己先放下日程去吃饭」，以及「对方说『今天/晚上请你吃饭』就直接调用 `town_life_treat`，不用问时间」。
