@@ -1,5 +1,5 @@
 import { dashboardUrl, startDashboard } from './lib/dashboard.mjs'
-import { npcGift, DEFAULT_FILE, status, event, act, enter, travel, buy, decorate, work, weather, npcTalk, eventSuggestion, rest, eat, sell, plant, waterField, harvest, jobsAt, JOBS, dailyView, rerollTasks, acceptTask, watchTV, invite, dineAt, cancelAppointment } from './lib/state.mjs'
+import { npcGift, DEFAULT_FILE, status, event, act, enter, travel, buy, decorate, work, weather, npcTalk, eventSuggestion, rest, eat, sell, plant, waterField, harvest, jobsAt, JOBS, dailyView, rerollTasks, acceptTask, watchTV, invite, dineAt, cancelAppointment, treat, buyLottery, lotteryView } from './lib/state.mjs'
 import { loadHostDeps } from './lib/hostdeps.mjs'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -110,6 +110,10 @@ function townPromptLine() {
   } else if (s.plan && s.plan.current) {
     parts.push('这是她自己排的今天的行程，现在该在' + s.plan.current.locationName + '（' + s.plan.current.label + '）' + (s.plan.next ? '，下一站 ' + s.plan.next.time + ' 去' + s.plan.next.locationName + '。' : '。'))
   }
+  if (s.lottery) {
+    if (s.lottery.pending) parts.push('她今天买了 ' + s.lottery.pending + ' 张彩票，明天才知道中没中。')
+    if (s.lottery.lastResult) parts.push('彩票公示：' + s.lottery.lastResult.number + ' ' + (s.lottery.lastResult.amount ? '中了' + s.lottery.lastResult.prizeLabel + '（' + s.lottery.lastResult.amount + ' 镇币）' : '没中，谢谢参与') + '。')
+  }
   const appts = (s.plan && Array.isArray(s.plan.appointments) ? s.plan.appointments : []).filter(a => a && a.label)
   if (appts.length === 1) {
     const a = appts[0]
@@ -204,6 +208,8 @@ export function apply(ctx, config = {}) {
 reg({ name: 'town_life_invite', description: '和她在指定地点约一件事，会临时改掉她今天日程里与这个时段重叠的安排（她会提前出发）。at 写 now、HH:MM 或 "+30"（多少分钟后），treats 为 true 表示这顿你请客、她不花钱。', parameters: { type: 'object', required: ['locationId'], properties: { locationId: { type: 'string' }, at: { type: 'string', description: 'now / HH:MM / +30' }, minutes: { type: 'integer', minimum: 10, maximum: 240, default: 60 }, label: { type: 'string', maxLength: 60 }, treats: { type: 'boolean', default: false }, note: { type: 'string', maxLength: 120 } }, additionalProperties: false } }, async ({ locationId, at = 'now', minutes = 60, label = '', treats = false, note = '' }) => invite(config, { locationId, at, minutes, label, treats, note }))
 reg({ name: 'town_life_dine', description: '和她在橡溪餐厅吃一顿，占 30 分钟：treats=true 你请客不花钱（心情 +14），否则扣 30 镇币（心情 +10）。要人在餐厅、店开着、手上没别的活。', parameters: { type: 'object', properties: { treats: { type: 'boolean', default: false } }, additionalProperties: false } }, async ({ treats = false } = {}) => dineAt(config, { treats }))
 reg({ name: 'town_life_appointments', description: '查看今天的约定（时间、地点、是不是你请客）；传 apptId 或 locationId 可以取消一条约定，日程会立刻重排。只读除非给了要取消的 id。', parameters: { type: 'object', properties: { apptId: { type: 'string' }, cancel: { type: 'boolean', default: false } }, additionalProperties: false } }, async ({ apptId, cancel = false } = {}) => { if (cancel && apptId) { const off = cancelAppointment(config, apptId); return { ok: true, mode: 'cancel-appointment', plan: off.plan } } const snapshot = status(config); return { ok: true, mode: 'appointments', appointments: snapshot.state.plan && snapshot.state.plan.appointments, plan: snapshot.state.plan } })
+reg({ name: 'town_life_treat', description: '简单触发她请你吃饭：说一句「今天请你吃饭」就来这个。不用给时间，她自己挑（午饭 12:10 或晚饭 18:30，太晚就挑一个当下能赶上的时间），自动写进今天的日程并标记你请客（她不花钱）。', parameters: { type: 'object', properties: { locationId: { type: 'string', default: 'oakbrook-restaurant' }, at: { type: 'string', description: '想指定时间就写 HH:MM，不填她自己挑' }, minutes: { type: 'integer', minimum: 10, maximum: 240, default: 60 }, label: { type: 'string', maxLength: 60 }, treats: { type: 'boolean', default: true } }, additionalProperties: false } }, async ({ locationId = 'oakbrook-restaurant', at, minutes = 60, label = '', treats = true } = {}) => treat(config, { locationId, at, minutes, label, treats }))
+reg({ name: 'town_life_lottery', description: '彩票：buy=true 在幸运星彩票店买一张（10 镇币，第二天开奖公示）；不传 buy 就查看今天买了什么票、昨天的公示结果和奖项表。一等奖大奖 500、二等奖三倍 30、三等奖回本 10。', parameters: { type: 'object', properties: { buy: { type: 'boolean', default: false } }, additionalProperties: false } }, async ({ buy = false } = {}) => { if (buy) { const b = buyLottery(config); return { ok: true, mode: 'buy-lottery', ticket: b.ticket, balance: b.balance, lottery: b.lottery } } const s = status(config).state; return { ok: true, mode: 'lottery', lottery: s.lottery } })
   try { off.push(registerPrompt(ctx)) } catch (error) { console.error('橡溪镇语气提示注入失败（不影响插件本身）', error && error.message) }
   try { registerSettingsRoutes(ctx) } catch (error) { console.error('橡溪镇设置接口注册失败（不影响插件本身）', error && error.message) }
   return () => off.forEach(fn => { try { fn?.() } catch {} })

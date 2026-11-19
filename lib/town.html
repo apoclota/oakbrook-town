@@ -10,6 +10,15 @@
 .plan-list{display:flex;flex-direction:column;gap:2px;max-height:132px;overflow:auto}
 .plan-row{display:grid;grid-template-columns:44px 96px 1fr;gap:6px;font-size:12px;color:#7b6d55;padding:1px 0}
 .plan-row.cur{color:#2f5d3a;font-weight:600}
+.lottery-box{margin-top:14px;padding:10px 12px;border:1px solid #d9c7a3;border-radius:10px;background:#fffaf0}
+.lottery-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;color:#6b4f2a}
+.lottery-head span{font-size:12px;color:#8a6a42}
+.lottery-sub{margin:10px 0 4px;font-size:12px;color:#8a6a42}
+.lottery-row{display:flex;gap:10px;font-size:13px;padding:3px 0;border-bottom:1px dashed #e7dcc6;color:#5c4a33}
+.lottery-row:last-child{border-bottom:none}
+.lottery-row.win{color:#1f7a3d;font-weight:600}
+.lottery-row span:first-child{font-family:ui-monospace,monospace;letter-spacing:1px}
+.lottery-prize{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;font-size:12px;color:#8a6a42}
 .plan-row.appt{color:#a8443a;font-weight:600}
 .plan-appt-badge{color:#a8443a;font-size:12px;margin-left:8px}
 .plan-row.passed{opacity:.45}
@@ -367,6 +376,7 @@ function draw(){
  if(false){const home=el('div','');home.className='choices';if(place.id==='fish-home'){const decorItems=(state.inventory||[]).filter(x=>x.decor||/灯|架|漆|盆栽|花瓶|长凳|围巾|台灯|邮票/.test(x.name||''));if(decorItems.length){home.append(el('strong','自由布置小屋'));for(const item of decorItems.slice(-6)){const row=el('div','');row.className='row';row.append(el('span',item.name));row.append(control('放到书桌','decorate',{item:item.id,room:'小书桌与日记本',x:35,y:45,rotation:0}));row.append(control('放到窗边','decorate',{item:item.id,room:'收藏瓶与窗边花盆',x:70,y:35,rotation:0}));home.append(row)}}}d.append(home)}
   const shop=state.shops?.find(s=>(s.locationId||s.id)===place.id)
  if(shop)d.append(el('h3','展示柜'),el('p','店里的东西都摆在正前面的展示柜里，点一件看详情和价格。'))
+  if(place.id==='lucky-star')lotteryBoard(d,place)
   if(inside&&!state.travel?.inProgress)jobsBox(d,place,control)
   if(!state.travel?.inProgress)dailyBox(d,place)
   if(inside){
@@ -440,6 +450,44 @@ function jobsBox(d,place,control){
     if(job.times)row.append(el('small','干过 '+job.times+' 次 · 熟练 +'+job.bonus+'%'))
     d.append(row)
   }
+}
+function lotteryBoard(d,place){
+  const lot=state.lottery
+  if(!lot)return
+  const box=el('div','');box.className='lottery-box'
+  const head=el('div','');head.className='lottery-head'
+  head.append(el('b','公告与号码墙'))
+  if(lot.pending)head.append(el('span','今天买了 '+lot.pending+' 张，明天开奖'))
+  box.append(head)
+  const results=(lot.results||[]).slice(0,6)
+  if(results.length){
+    const sub=el('div','');sub.className='lottery-sub';sub.textContent='昨天开奖公示';box.append(sub)
+    for(const r of results){
+      const row=el('div','');row.className='lottery-row'+(r.amount?' win':'')
+      row.append(el('span',''+r.number))
+      row.append(el('span',''+r.prizeLabel))
+      row.append(el('span',''+(r.amount?('+'+r.amount+' 镇币'):'—')))
+      box.append(row)
+    }
+  }else{
+    box.append(el('p','昨天的号码还贴在墙上，今天买的票明天这时候公示。'))
+  }
+  if(lot.tickets&&lot.tickets.length){
+    const sub2=el('div','');sub2.className='lottery-sub';sub2.textContent='今天买的票';box.append(sub2)
+    for(const t of lot.tickets){
+      const row=el('div','');row.className='lottery-row'
+      row.append(el('span',''+t.number))
+      row.append(el('span',t.name))
+      row.append(el('span','等开奖'))
+      box.append(row)
+    }
+  }
+  const prize=el('div','');prize.className='lottery-prize'
+  prize.append(el('span','一等奖 '+((lot.prizes&&lot.prizes[0]&&lot.prizes[0].amount)||500)+' 镇币（1%）'))
+  prize.append(el('span','二等奖 '+((lot.prizes&&lot.prizes[1]&&lot.prizes[1].amount)||30)+' 镇币（5%）'))
+  prize.append(el('span','三等奖 '+((lot.prizes&&lot.prizes[2]&&lot.prizes[2].amount)||10)+' 镇币回本（24%）'))
+  box.append(prize)
+  d.append(box)
 }
 function planBox(d,place){
   const plan=state.plan
