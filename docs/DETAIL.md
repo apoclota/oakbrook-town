@@ -34,3 +34,9 @@ MIT License.
 - `town_life_dine({ treats })`：在餐厅坐下吃 30 分钟。`treats=true` 时不扣钱；否则扣 `MEAL_COST = 30` 镇币、心情 +10。
 - `town_life_appointments({ apptId, cancel })`：列出今天的约定，传 `apptId` + `cancel:true` 取消并立刻重排日程。
 - 网页路线面板把约定段标成 ♥ 并注明「你请客」；`/state` 的 `plan.appointments` 里带 `time` / `untilTime`。
+
+## First run (1.11.3)
+
+- If the save file is missing, `readState` catches `ENOENT`, creates it from the bundled `lib/seed-town.json` (directories included), and continues; the dashboard never starts with a 400.
+- `fileOf(config)` falls back to `DEFAULT_FILE`: `DSH_TOWN_LIFE_FILE` → `$DSH_HOME/town-life.json` → `~/.dsh/town-life.json` — no machine-specific path.
+- The seed save is a clean "day one": at home, 320 coins, empty bag and rooms, no appointments or tickets.

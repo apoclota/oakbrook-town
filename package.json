@@ -1,6 +1,6 @@
 {
   "name": "dsh-town-life",
-  "version": "1.11.2",
+  "version": "1.11.3",
   "private": true,
   "type": "module",
   "description": "橡溪镇主角生活线：可从 DSH 简介和设置进入实时地图，查看地点、商店、货币与 NPC，并进行旅行、购物、对话、工作和小屋自由装修；与主角共享本地状态。",
@@ -13,10 +13,30 @@
     "./locale/*.json": "./locale/*.json",
     "./icon": "./icon.svg"
   },
-  "files": ["index.js", "client.js", "lib", "cordis.patch.yml", "locale", "docs", "icon.svg"],
+  "files": [
+    "index.js",
+    "client.js",
+    "lib",
+    "cordis.patch.yml",
+    "locale",
+    "docs",
+    "icon.svg"
+  ],
   "dsh": {
-    "bundle": { "patch": "./cordis.patch.yml" },
-    "client": { "platform": "web", "inject": ["slots"], "external": ["react"] }
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "slots"
+      ],
+      "external": [
+        "react"
+      ]
+    }
   },
-  "scripts": { "town": "node lib/serve.mjs" }
+  "scripts": {
+    "town": "node lib/serve.mjs"
+  }
 }

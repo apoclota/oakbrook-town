@@ -1,0 +1,1190 @@
+{
+  "schema": 2,
+  "fishName": "主角",
+  "avatar": {
+    "mode": "builtin",
+    "name": "内置头像",
+    "imageUrl": "",
+    "alt": "蓝色圆滚滚的主角"
+  },
+  "home": "月镜湖·芦苇湾",
+  "currentPhase": "清晨采光",
+  "mood": 60,
+  "energy": 85,
+  "coins": 320,
+  "wallet": {
+    "currency": "CNY",
+    "label": "小镇币",
+    "balance": 320,
+    "dailyAllowance": 80
+  },
+  "routine": [
+    "清晨采光",
+    "上午整理小屋",
+    "午后湖边散步",
+    "傍晚和邻居聊天",
+    "夜里写日记"
+  ],
+  "tasks": [
+    "给窗台贝壳灯擦灰",
+    "替芬恩把晒好的渔网收进屋",
+    "邀请玛尔塔来喝一杯热茶"
+  ],
+  "freeActions": [
+    "回小屋整理收藏",
+    "去月镜湖散步",
+    "给贝壳灯擦灰",
+    "邀请邻居喝茶",
+    "写一页日记",
+    "什么也不做，安静睡一会"
+  ],
+  "weather": {
+    "provider": "city",
+    "city": "成都",
+    "district": "",
+    "latitude": 30.5728,
+    "longitude": 104.0668,
+    "timezone": "Asia/Shanghai",
+    "condition": "晴",
+    "temperatureC": 20,
+    "feelsLikeC": 20,
+    "humidity": 55,
+    "windKph": 8,
+    "updatedAt": null,
+    "source": "待接入天气服务"
+  },
+  "location": {
+    "id": "fish-home",
+    "name": "月镜湖·芦苇湾",
+    "kind": "home",
+    "walkMinutes": 0,
+    "transitMinutes": 0,
+    "description": "湖畔木屋、小书桌和贝壳灯。"
+  },
+  "locations": [
+    {
+      "id": "fish-home",
+      "name": "月镜湖·芦苇湾",
+      "kind": "home",
+      "walkMinutes": 0,
+      "transitMinutes": 0,
+      "description": "湖畔木屋、小书桌和贝壳灯。",
+      "interior": {
+        "title": "芦苇湾木屋",
+        "rooms": [
+          "小书桌与日记本",
+          "贝壳灯和灯芯架",
+          "收藏瓶与窗边花盆"
+        ],
+        "detail": "木屋里有一张靠窗书桌，夜里可以听见湖水。"
+      }
+    },
+    {
+      "id": "oakbrook-restaurant",
+      "name": "橡溪餐厅",
+      "kind": "restaurant",
+      "walkMinutes": 12,
+      "transitMinutes": 4,
+      "cost": 18,
+      "description": "有热汤、米饭和今日小菜。",
+      "interior": {
+        "title": "橡溪餐厅内",
+        "rooms": [
+          "靠窗热汤桌",
+          "木质吧台",
+          "后厨灶台"
+        ],
+        "detail": "厨房和用餐区相连，能看见热汤冒出的白气。"
+      }
+    },
+    {
+      "id": "oakbrook-market",
+      "name": "橡溪杂货店",
+      "kind": "shop",
+      "walkMinutes": 8,
+      "transitMinutes": 3,
+      "description": "日用品、零食和小屋装饰。",
+      "interior": {
+        "title": "橡溪杂货店内",
+        "rooms": [
+          "零食货架",
+          "灯芯与文具柜",
+          "门口花箱"
+        ],
+        "detail": "窄窄的木货架排成两列，收银台旁挂着手绘价签。"
+      }
+    },
+    {
+      "id": "oakbrook-station",
+      "name": "橡溪交通站",
+      "kind": "transport",
+      "walkMinutes": 10,
+      "transitMinutes": 3,
+      "description": "公交、出租车和短途接驳。",
+      "interior": {
+        "title": "橡溪交通站内",
+        "rooms": [
+          "候车长椅",
+          "时刻表墙",
+          "小型售票窗"
+        ],
+        "detail": "候车厅有暖黄色顶灯，墙上贴着短途接驳线路。"
+      }
+    },
+    {
+      "id": "moonlake-park",
+      "name": "月镜湖公园",
+      "kind": "park",
+      "walkMinutes": 18,
+      "transitMinutes": 6,
+      "description": "散步、长椅和湖边观景。",
+      "interior": {
+        "title": "月镜湖公园内",
+        "rooms": [
+          "湖岸长椅",
+          "木栈道观景台",
+          "小亭与鸟食台"
+        ],
+        "detail": "公园没有封闭房屋，但有可避雨的小亭和湖岸室内式休息角。"
+      }
+    },
+    {
+      "id": "lucky-star",
+      "name": "幸运星彩票店",
+      "kind": "lottery",
+      "walkMinutes": 15,
+      "transitMinutes": 5,
+      "description": "现实对应的彩票店；购买受每日限额约束。",
+      "interior": {
+        "title": "幸运星彩票店内",
+        "rooms": [
+          "公告与号码墙",
+          "木质柜台",
+          "手绘海报橱窗"
+        ],
+        "detail": "柜台后是号码墙，窗边摆着镇民画的幸运星海报。"
+      }
+    },
+    {
+      "id": "oakbrook-pharmacy",
+      "name": "橡溪药房",
+      "kind": "service",
+      "walkMinutes": 11,
+      "transitMinutes": 4,
+      "description": "常用药品、护理用品和健康咨询。",
+      "interior": {
+        "title": "橡溪药房内",
+        "rooms": [
+          "药品柜",
+          "护理用品架",
+          "咨询台"
+        ],
+        "detail": "药师在柜台后整理药盒，墙上贴着健康提醒。"
+      }
+    },
+    {
+      "id": "oakbrook-bakery",
+      "name": "麦穗面包房",
+      "kind": "bakery",
+      "walkMinutes": 9,
+      "transitMinutes": 3,
+      "description": "刚出炉的面包、点心和咖啡。",
+      "interior": {
+        "title": "麦穗面包房内",
+        "rooms": [
+          "出炉面包架",
+          "咖啡台",
+          "后厨烤炉"
+        ],
+        "detail": "空气里有麦香，玻璃柜里摆着今天的点心。"
+      }
+    },
+    {
+      "id": "oakbrook-hardware",
+      "name": "榫卯五金铺",
+      "kind": "hardware",
+      "walkMinutes": 14,
+      "transitMinutes": 5,
+      "description": "修缮工具、灯具、五金和木屋材料。",
+      "interior": {
+        "title": "榫卯五金铺内",
+        "rooms": [
+          "工具墙",
+          "木料架",
+          "配色台"
+        ],
+        "detail": "墙上挂满工具，角落堆着适合木屋修缮的材料。"
+      }
+    },
+    {
+      "id": "oakbrook-clothing",
+      "name": "云杉衣铺",
+      "kind": "clothing",
+      "walkMinutes": 13,
+      "transitMinutes": 5,
+      "description": "换季衣物、鞋帽和布艺小物。",
+      "interior": {
+        "title": "云杉衣铺内",
+        "rooms": [
+          "试衣镜",
+          "布料架",
+          "鞋帽柜"
+        ],
+        "detail": "店里挂着湖蓝色布艺，试衣镜旁有一盏暖灯。"
+      }
+    },
+    {
+      "id": "oakbrook-flower",
+      "name": "湖畔花店",
+      "kind": "flower",
+      "walkMinutes": 7,
+      "transitMinutes": 3,
+      "description": "鲜花、盆栽、种子和花瓶。",
+      "interior": {
+        "title": "湖畔花店内",
+        "rooms": [
+          "鲜花桶",
+          "种子抽屉",
+          "花瓶展示台"
+        ],
+        "detail": "门口的风铃轻响，花香从湖边一路飘进来。"
+      }
+    },
+    {
+      "id": "oakbrook-library",
+      "name": "橡溪图书馆",
+      "kind": "library",
+      "walkMinutes": 16,
+      "transitMinutes": 6,
+      "description": "借书、安静阅读和小镇公告。",
+      "interior": {
+        "title": "橡溪图书馆内",
+        "rooms": [
+          "借阅台",
+          "窗边书桌",
+          "小镇档案柜"
+        ],
+        "detail": "镇民把旧地图和故事放在档案柜里，供大家查阅。"
+      }
+    },
+    {
+      "id": "oakbrook-workshop",
+      "name": "木匠工作室",
+      "kind": "workshop",
+      "walkMinutes": 18,
+      "transitMinutes": 7,
+      "description": "定制家具、修理用品和房屋升级。",
+      "interior": {
+        "title": "木匠工作室内",
+        "rooms": [
+          "木工台",
+          "家具样品间",
+          "修理角"
+        ],
+        "detail": "木屑和松木香混在一起，师傅正在打磨窗边长凳。"
+      }
+    },
+    {
+      "id": "oakbrook-post",
+      "name": "邮局与包裹站",
+      "kind": "post",
+      "walkMinutes": 10,
+      "transitMinutes": 4,
+      "description": "寄信、取包裹和购买邮票。",
+      "interior": {
+        "title": "邮局与包裹站内",
+        "rooms": [
+          "邮务柜台",
+          "包裹架",
+          "公告栏"
+        ],
+        "detail": "公告栏上贴着失物招领和小镇近期活动。"
+      }
+    },
+    {
+      "id": "oakbrook-furniture",
+      "name": "橡溪家具行",
+      "kind": "furniture",
+      "walkMinutes": 12,
+      "transitMinutes": 4,
+      "description": "手工木家具、布艺和墙面摆设，买下来就能搬回小屋。",
+      "interior": {
+        "title": "橡溪家具行内",
+        "rooms": [
+          "休息区",
+          "操作台",
+          "展示角"
+        ],
+        "detail": "这里有一个可以停留和互动的室内场景。"
+      }
+    }
+  ],
+  "shops": [
+    {
+      "id": "oakbrook-restaurant",
+      "name": "橡溪餐厅",
+      "items": [
+        {
+          "id": "hot-soup",
+          "name": "热汤套餐",
+          "price": 18,
+          "energy": 12,
+          "sprite": "soup"
+        },
+        {
+          "id": "berry-pie",
+          "name": "莓果饼",
+          "price": 12,
+          "mood": 8,
+          "sprite": "pie"
+        },
+        {
+          "id": "dumpling",
+          "name": "手工饺子",
+          "price": 14,
+          "energy": 5,
+          "mood": 4,
+          "food": {
+            "energy": 12,
+            "mood": 4,
+            "minutes": 12
+          },
+          "sprite": "dumpling"
+        }
+      ]
+    },
+    {
+      "id": "oakbrook-market",
+      "name": "橡溪杂货店",
+      "items": [
+        {
+          "id": "shell-lamp",
+          "name": "贝壳灯灯芯",
+          "price": 25,
+          "mood": 4,
+          "sprite": "lamp"
+        },
+        {
+          "id": "notebook",
+          "name": "日记本",
+          "price": 16,
+          "mood": 2,
+          "sprite": "notebook"
+        },
+        {
+          "id": "tea",
+          "name": "红茶",
+          "price": 8,
+          "mood": 5,
+          "sprite": "teacup"
+        },
+        {
+          "id": "teapot",
+          "name": "粗陶茶壶",
+          "price": 26,
+          "mood": 6,
+          "decor": true,
+          "sprite": "teapot"
+        },
+        {
+          "id": "candle",
+          "name": "香薰蜡烛",
+          "price": 18,
+          "mood": 7,
+          "decor": true,
+          "sprite": "candle"
+        },
+        {
+          "id": "basket",
+          "name": "藤编篮",
+          "price": 22,
+          "mood": 5,
+          "decor": true,
+          "sprite": "basket"
+        },
+        {
+          "id": "frame",
+          "name": "木相框",
+          "price": 20,
+          "mood": 5,
+          "decor": true,
+          "sprite": "frame"
+        },
+        {
+          "id": "seed-tomato",
+          "name": "番茄种子",
+          "price": 20,
+          "sprite": "seed",
+          "seed": "tomato"
+        },
+        {
+          "id": "seed-pumpkin",
+          "name": "南瓜种子",
+          "price": 30,
+          "sprite": "seed",
+          "seed": "pumpkin"
+        },
+        {
+          "id": "seed-wheat",
+          "name": "麦种",
+          "price": 25,
+          "sprite": "seed",
+          "seed": "wheat"
+        },
+        {
+          "id": "apple",
+          "name": "青苹果",
+          "price": 9,
+          "energy": 6,
+          "mood": 2,
+          "food": {
+            "energy": 6,
+            "mood": 2,
+            "minutes": 5
+          },
+          "sprite": "fruit"
+        }
+      ]
+    },
+    {
+      "id": "lucky-star",
+      "name": "幸运星彩票店",
+      "items": [
+        {
+          "id": "lottery-ticket",
+          "name": "彩票",
+          "price": 2,
+          "chance": 0.01,
+          "maxDaily": 1,
+          "sprite": "ticket"
+        },
+        {
+          "id": "scratch-card",
+          "name": "刮刮乐",
+          "price": 5,
+          "mood": 2,
+          "sprite": "ticket"
+        }
+      ]
+    },
+    {
+      "id": "oakbrook-pharmacy",
+      "name": "橡溪药房",
+      "items": [
+        {
+          "id": "first-aid",
+          "name": "急救包",
+          "price": 28,
+          "energy": 8,
+          "sprite": "firstaid"
+        },
+        {
+          "id": "vitamin",
+          "name": "维生素",
+          "price": 12,
+          "energy": 3,
+          "sprite": "bottle"
+        },
+        {
+          "id": "seed-herb",
+          "name": "草药种子",
+          "price": 40,
+          "sprite": "seed",
+          "seed": "herb"
+        }
+      ]
+    },
+    {
+      "id": "oakbrook-bakery",
+      "name": "麦穗面包房",
+      "items": [
+        {
+          "id": "bread",
+          "name": "乡村面包",
+          "price": 10,
+          "energy": 8,
+          "sprite": "bread"
+        },
+        {
+          "id": "coffee",
+          "name": "热咖啡",
+          "price": 9,
+          "energy": 5,
+          "mood": 3,
+          "sprite": "coffee"
+        },
+        {
+          "id": "cake",
+          "name": "奶油蛋糕",
+          "price": 22,
+          "mood": 12,
+          "sprite": "cake"
+        },
+        {
+          "id": "cookie",
+          "name": "黄油曲奇",
+          "price": 8,
+          "mood": 4,
+          "sprite": "cookie"
+        },
+        {
+          "id": "tart",
+          "name": "苹果挞",
+          "price": 16,
+          "mood": 8,
+          "sprite": "pie"
+        },
+        {
+          "id": "hot-soup",
+          "name": "热汤",
+          "price": 30,
+          "energy": 25,
+          "mood": 6,
+          "food": {
+            "energy": 25,
+            "mood": 6,
+            "minutes": 15
+          },
+          "sprite": "soup"
+        },
+        {
+          "id": "cake-slice",
+          "name": "蛋糕",
+          "price": 35,
+          "energy": 15,
+          "mood": 8,
+          "food": {
+            "energy": 15,
+            "mood": 8,
+            "minutes": 12
+          },
+          "sprite": "cake"
+        }
+      ]
+    },
+    {
+      "id": "oakbrook-hardware",
+      "name": "榫卯五金铺",
+      "items": [
+        {
+          "id": "paint",
+          "name": "木屋油漆",
+          "price": 32,
+          "mood": 5,
+          "decor": true,
+          "sprite": "paint"
+        },
+        {
+          "id": "toolbox",
+          "name": "工具箱",
+          "price": 45,
+          "mood": 6,
+          "decor": true,
+          "sprite": "toolbox"
+        },
+        {
+          "id": "shelf",
+          "name": "橡木壁架",
+          "price": 58,
+          "mood": 10,
+          "decor": true,
+          "sprite": "shelf"
+        },
+        {
+          "id": "wall-clock",
+          "name": "铜面挂钟",
+          "price": 88,
+          "mood": 11,
+          "decor": true,
+          "sprite": "clock"
+        },
+        {
+          "id": "curtain-rod",
+          "name": "窗帘杆",
+          "price": 22,
+          "mood": 3,
+          "decor": true,
+          "sprite": "rod"
+        }
+      ]
+    },
+    {
+      "id": "oakbrook-clothing",
+      "name": "云杉衣铺",
+      "items": [
+        {
+          "id": "raincoat",
+          "name": "雨衣",
+          "price": 36,
+          "mood": 5,
+          "decor": true,
+          "sprite": "raincoat"
+        },
+        {
+          "id": "scarf",
+          "name": "湖蓝围巾",
+          "price": 24,
+          "mood": 6,
+          "decor": true,
+          "sprite": "scarf"
+        },
+        {
+          "id": "cushion",
+          "name": "花布靠垫",
+          "price": 35,
+          "mood": 7,
+          "decor": true,
+          "sprite": "cushion"
+        },
+        {
+          "id": "blanket",
+          "name": "拼布毯",
+          "price": 58,
+          "mood": 9,
+          "decor": true,
+          "sprite": "blanket"
+        },
+        {
+          "id": "curtain",
+          "name": "亚麻窗帘",
+          "price": 85,
+          "mood": 10,
+          "decor": true,
+          "sprite": "curtain"
+        }
+      ]
+    },
+    {
+      "id": "oakbrook-flower",
+      "name": "湖畔花店",
+      "items": [
+        {
+          "id": "seed-pack",
+          "name": "花种子",
+          "price": 14,
+          "mood": 5,
+          "decor": true,
+          "sprite": "flowers"
+        },
+        {
+          "id": "potted-fern",
+          "name": "蕨类盆栽",
+          "price": 30,
+          "mood": 9,
+          "decor": true,
+          "sprite": "plant"
+        },
+        {
+          "id": "vase",
+          "name": "手绘花瓶",
+          "price": 38,
+          "mood": 8,
+          "decor": true,
+          "sprite": "vase"
+        },
+        {
+          "id": "hanging-plant",
+          "name": "垂吊绿萝",
+          "price": 46,
+          "mood": 10,
+          "decor": true,
+          "sprite": "hanging"
+        },
+        {
+          "id": "flower-bunch",
+          "name": "一束蓝花",
+          "price": 20,
+          "mood": 6,
+          "sprite": "flowers"
+        },
+        {
+          "id": "seed-flower",
+          "name": "花种子",
+          "price": 15,
+          "sprite": "seed",
+          "seed": "flower"
+        }
+      ]
+    },
+    {
+      "id": "oakbrook-library",
+      "name": "橡溪图书馆",
+      "items": [
+        {
+          "id": "travel-book",
+          "name": "湖区旅行书",
+          "price": 20,
+          "mood": 7,
+          "sprite": "book"
+        },
+        {
+          "id": "recipe-book",
+          "name": "家常菜谱",
+          "price": 18,
+          "mood": 6,
+          "sprite": "box"
+        },
+        {
+          "id": "story-album",
+          "name": "湖岸绘本",
+          "price": 24,
+          "mood": 8,
+          "sprite": "book"
+        }
+      ]
+    },
+    {
+      "id": "oakbrook-workshop",
+      "name": "木匠工作室",
+      "items": [
+        {
+          "id": "bench",
+          "name": "窗边长凳",
+          "price": 90,
+          "mood": 14,
+          "decor": true,
+          "sprite": "bench"
+        },
+        {
+          "id": "lamp",
+          "name": "黄铜台灯",
+          "price": 75,
+          "mood": 12,
+          "decor": true,
+          "sprite": "lamp"
+        },
+        {
+          "id": "rocking-chair",
+          "name": "木摇椅",
+          "price": 210,
+          "mood": 20,
+          "decor": true,
+          "sprite": "rocking-chair"
+        },
+        {
+          "id": "side-table",
+          "name": "小边几",
+          "price": 65,
+          "mood": 8,
+          "decor": true,
+          "sprite": "lowtable"
+        },
+        {
+          "id": "coat-rack",
+          "name": "门边衣架",
+          "price": 55,
+          "mood": 7,
+          "decor": true,
+          "sprite": "coat-rack"
+        }
+      ]
+    },
+    {
+      "id": "oakbrook-post",
+      "name": "邮局与包裹站",
+      "items": [
+        {
+          "id": "postcard",
+          "name": "湖景明信片",
+          "price": 6,
+          "mood": 3,
+          "sprite": "postcard"
+        },
+        {
+          "id": "stamp-book",
+          "name": "纪念邮票册",
+          "price": 26,
+          "mood": 7,
+          "decor": true,
+          "sprite": "book"
+        },
+        {
+          "id": "letter-set",
+          "name": "信封信纸",
+          "price": 12,
+          "mood": 4,
+          "sprite": "envelope"
+        }
+      ]
+    },
+    {
+      "id": "oakbrook-furniture",
+      "name": "橡溪家具行",
+      "items": [
+        {
+          "id": "sofa",
+          "name": "二人布沙发",
+          "price": 260,
+          "mood": 22,
+          "decor": true,
+          "sprite": "sofa"
+        },
+        {
+          "id": "armchair",
+          "name": "布艺扶手椅",
+          "price": 140,
+          "mood": 15,
+          "decor": true,
+          "sprite": "armchair"
+        },
+        {
+          "id": "dining-table",
+          "name": "橡木餐桌",
+          "price": 220,
+          "mood": 18,
+          "decor": true,
+          "sprite": "table"
+        },
+        {
+          "id": "coffee-table",
+          "name": "矮茶几",
+          "price": 95,
+          "mood": 10,
+          "decor": true,
+          "sprite": "lowtable"
+        },
+        {
+          "id": "stool",
+          "name": "木圆凳",
+          "price": 45,
+          "mood": 6,
+          "decor": true,
+          "sprite": "stool"
+        },
+        {
+          "id": "bookshelf",
+          "name": "高脚书架",
+          "price": 180,
+          "mood": 16,
+          "decor": true,
+          "sprite": "bookshelf"
+        },
+        {
+          "id": "bed",
+          "name": "单人木床",
+          "price": 320,
+          "mood": 24,
+          "decor": true,
+          "sprite": "bed"
+        },
+        {
+          "id": "cabinet",
+          "name": "矮收纳柜",
+          "price": 160,
+          "mood": 12,
+          "decor": true,
+          "sprite": "cabinet"
+        },
+        {
+          "id": "wardrobe",
+          "name": "双门衣橱",
+          "price": 280,
+          "mood": 18,
+          "decor": true,
+          "sprite": "wardrobe"
+        },
+        {
+          "id": "rug",
+          "name": "编织地毯",
+          "price": 70,
+          "mood": 11,
+          "decor": true,
+          "sprite": "rug"
+        },
+        {
+          "id": "mirror",
+          "name": "落地镜",
+          "price": 120,
+          "mood": 12,
+          "decor": true,
+          "sprite": "mirror"
+        },
+        {
+          "id": "painting",
+          "name": "湖景挂画",
+          "price": 110,
+          "mood": 13,
+          "decor": true,
+          "sprite": "painting"
+        },
+        {
+          "id": "floor-lamp",
+          "name": "布罩落地灯",
+          "price": 100,
+          "mood": 12,
+          "decor": true,
+          "sprite": "floor-lamp"
+        },
+        {
+          "id": "radio",
+          "name": "旧收音机",
+          "price": 130,
+          "mood": 14,
+          "decor": true,
+          "sprite": "radio"
+        },
+        {
+          "id": "desk",
+          "name": "写字桌",
+          "price": 190,
+          "mood": 15,
+          "decor": true,
+          "sprite": "desk"
+        },
+        {
+          "id": "nightstand",
+          "name": "床头柜",
+          "price": 85,
+          "mood": 8,
+          "decor": true,
+          "sprite": "nightstand"
+        },
+        {
+          "id": "vanity",
+          "name": "梳妆台",
+          "price": 175,
+          "mood": 13,
+          "decor": true,
+          "sprite": "vanity"
+        },
+        {
+          "id": "fireplace",
+          "name": "小壁炉",
+          "price": 240,
+          "mood": 20,
+          "decor": true,
+          "sprite": "fireplace"
+        },
+        {
+          "id": "stove",
+          "name": "老式灶台",
+          "price": 210,
+          "mood": 16,
+          "decor": true,
+          "sprite": "stove"
+        },
+        {
+          "id": "sink",
+          "name": "白瓷水槽",
+          "price": 130,
+          "mood": 10,
+          "decor": true,
+          "sprite": "sink"
+        },
+        {
+          "id": "counter",
+          "name": "厨房台面",
+          "price": 150,
+          "mood": 12,
+          "decor": true,
+          "sprite": "counter"
+        },
+        {
+          "id": "fridge",
+          "name": "旧冰箱",
+          "price": 260,
+          "mood": 18,
+          "decor": true,
+          "sprite": "fridge"
+        },
+        {
+          "id": "screen",
+          "name": "木框屏风",
+          "price": 140,
+          "mood": 11,
+          "decor": true,
+          "sprite": "screen"
+        },
+        {
+          "id": "shoe-cabinet",
+          "name": "门边鞋柜",
+          "price": 95,
+          "mood": 9,
+          "decor": true,
+          "sprite": "shoe-cabinet"
+        },
+        {
+          "id": "desk-chair",
+          "name": "书桌椅",
+          "price": 110,
+          "mood": 10,
+          "decor": true,
+          "sprite": "desk-chair"
+        },
+        {
+          "id": "wall-shelf",
+          "name": "墙上隔板",
+          "price": 70,
+          "mood": 7,
+          "decor": true,
+          "sprite": "wall-shelf"
+        },
+        {
+          "id": "wall-lamp",
+          "name": "壁灯",
+          "price": 60,
+          "mood": 8,
+          "decor": true,
+          "sprite": "wall-lamp"
+        },
+        {
+          "id": "tv",
+          "name": "旧电视",
+          "price": 320,
+          "mood": 22,
+          "decor": true,
+          "sprite": "tv",
+          "tv": true
+        },
+        {
+          "id": "tv-cabinet",
+          "name": "电视柜",
+          "price": 160,
+          "mood": 12,
+          "decor": true,
+          "sprite": "tv-cabinet"
+        },
+        {
+          "id": "speaker",
+          "name": "木音箱",
+          "price": 120,
+          "mood": 10,
+          "decor": true,
+          "sprite": "speaker"
+        },
+        {
+          "id": "washing-machine",
+          "name": "洗衣机",
+          "price": 280,
+          "mood": 16,
+          "decor": true,
+          "sprite": "washing-machine"
+        },
+        {
+          "id": "microwave",
+          "name": "微波炉",
+          "price": 150,
+          "mood": 10,
+          "decor": true,
+          "sprite": "microwave"
+        },
+        {
+          "id": "ceiling-lamp",
+          "name": "吊灯",
+          "price": 95,
+          "mood": 12,
+          "decor": true,
+          "sprite": "ceiling-lamp"
+        },
+        {
+          "id": "beanbag",
+          "name": "懒人沙发",
+          "price": 110,
+          "mood": 12,
+          "decor": true,
+          "sprite": "beanbag"
+        },
+        {
+          "id": "dining-chair",
+          "name": "餐椅",
+          "price": 90,
+          "mood": 8,
+          "decor": true,
+          "sprite": "dining-chair"
+        }
+      ]
+    }
+  ],
+  "inventory": [],
+  "travel": {
+    "mode": "walk",
+    "minutesToday": 0,
+    "date": null
+  },
+  "adapters": {
+    "storage": "town-life-json-v2",
+    "conversation": "dshBridge",
+    "weather": "open-meteo"
+  },
+  "events": {
+    "daily": [],
+    "偶然": [],
+    "突发": []
+  },
+  "lastEvent": null,
+  "lastAction": null,
+  "updatedAt": "2026-11-19T12:48:41.647Z",
+  "relationships": {},
+  "homeDecor": [],
+  "npcs": [],
+  "homeRooms": [
+    {
+      "id": "living",
+      "name": "客厅",
+      "x": 3,
+      "y": 5,
+      "w": 53,
+      "h": 55,
+      "floor": "#d9c3a0"
+    },
+    {
+      "id": "bedroom",
+      "name": "卧室",
+      "x": 58,
+      "y": 5,
+      "w": 39,
+      "h": 36,
+      "floor": "#cbb894"
+    },
+    {
+      "id": "study",
+      "name": "书房",
+      "x": 58,
+      "y": 43,
+      "w": 39,
+      "h": 52,
+      "floor": "#d3bd97"
+    },
+    {
+      "id": "kitchen",
+      "name": "厨房",
+      "x": 3,
+      "y": 62,
+      "w": 26,
+      "h": 33,
+      "floor": "#c8b794"
+    },
+    {
+      "id": "yard",
+      "name": "小院",
+      "x": 31,
+      "y": 62,
+      "w": 25,
+      "h": 33,
+      "floor": "#b9a67f"
+    }
+  ],
+  "lastVisit": null,
+  "homeVisitor": null,
+  "field": null,
+  "lastClockAt": "2026-11-19T12:34:47.486Z",
+  "daily": null,
+  "plan": null,
+  "nightWarning": null,
+  "planStep": null,
+  "planLabel": null,
+  "sleeping": false,
+  "lottery": {
+    "tickets": [],
+    "results": [],
+    "purchased": 0,
+    "won": 0
+  },
+  "appointments": [],
+  "activity": null,
+  "lastMealAt": null,
+  "lastApptMeal": "a-pmwnclxkk",
+  "clockOffset": 150,
+  "lastResult": null,
+  "media": null
+}

@@ -54,3 +54,9 @@ MIT License.
 - 吃什么按场景决定：背包里有可吃的东西（`item.food` / `edible` / 面包蛋糕饼咖啡茶壶 sprite）就直接吃掉；人在橡溪餐厅且营业就点一顿 30 分钟的饭，钱够扣 `MEAL_COST = 30`，不够就白吃；在家就自己做 20 分钟（精力 +12、心情 +4、不花钱）；都不满足就先走去餐厅（打烊则回家）。
 - 吃完会写 `state.lastMealAt`，`fullnessOf` 用它算饱食度；`lastMealAt` 缺失时按「10 小时没吃」估算（此前会把 1970 年当上次吃饭，导致 hours 数值巨大）。
 - 提示词会补一句「她已经饿坏了，会自己先放下日程去吃饭」，以及「对方说『今天/晚上请你吃饭』就直接调用 `town_life_treat`，不用问时间」。
+
+## 首次运行（1.11.3）
+
+- 存档文件不存在时，`readState` 捕获 `ENOENT`：用包内 `lib/seed-town.json` 建一份（目录一并创建），然后照常运行；首次打开地图不会是 400。
+- `fileOf(config)` 在没有 `stateFile` 时落到 `DEFAULT_FILE`：`DSH_TOWN_LIFE_FILE` → `$DSH_HOME/town-life.json` → `~/.dsh/town-life.json`，不再写死某台机器的路径。
+- 初始存档是「第一天」状态：位置在家、320 小镇币、背包与家具空、没有约定和彩票记录。删掉 JSON 即可重开。
