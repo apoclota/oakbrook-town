@@ -10,6 +10,8 @@
 .plan-list{display:flex;flex-direction:column;gap:2px;max-height:132px;overflow:auto}
 .plan-row{display:grid;grid-template-columns:44px 96px 1fr;gap:6px;font-size:12px;color:#7b6d55;padding:1px 0}
 .plan-row.cur{color:#2f5d3a;font-weight:600}
+.plan-row.appt{color:#a8443a;font-weight:600}
+.plan-appt-badge{color:#a8443a;font-size:12px;margin-left:8px}
 .plan-row.passed{opacity:.45}
 
 .furniture{background:none;border:0;padding:0;cursor:grab;filter:drop-shadow(0 6px 5px rgba(90,70,40,.28));transition:filter .15s}
@@ -445,6 +447,8 @@ function planBox(d,place){
   const box=el('div','');box.className='plan-box'
   const head=el('div','');head.className='plan-head'
   head.append(el('b','今天的路线'))
+  const appts=(plan.appointments||[])
+  if(appts.length){const ab=el('span','♥ 今天约了 '+appts.length+' 件');ab.className='plan-appt-badge';head.append(ab)}
   const toggle=el('button',plan.autoPilot===false?'开启自动出门':'关闭自动出门')
   toggle.onclick=()=>run({kind:'autopilot',autoPilot:plan.autoPilot===false})
   head.append(toggle)
@@ -456,14 +460,14 @@ function planBox(d,place){
     const pct=Math.round((t.progress||0)*100)
     box.append(el('p','🚶 正在路上：'+(from?from.name:t.from)+' → '+(to?to.name:t.to)+' · '+pct+'%'+(t.reason?'（'+t.reason+'）':'')))
   }else if(cur){
-    box.append(el('p','现在：'+cur.time+' · '+cur.locationName+' · '+cur.label))
+    box.append(el('p','现在：'+cur.time+' · '+cur.locationName+' · '+cur.label+(cur.appointment?' ♥ 和你约好的'+(cur.treats?'（你请客）':''):'')))
   }
   const list=el('div','');list.className='plan-list'
   plan.steps.forEach(step=>{
-    const row=el('div','');row.className='plan-row'+(step.current?' cur':'')+(step.passed?' passed':'')
+    const row=el('div','');row.className='plan-row'+(step.current?' cur':'')+(step.passed?' passed':'')+(step.appointment?' appt':'')
     row.append(el('span',''+step.time))
     row.append(el('span',''+(step.current?'▶ ':'')+step.locationName))
-    row.append(el('span',''+step.label))
+    row.append(el('span',''+(step.appointment?'♥ ':'')+step.label+(step.treats?'（你请客）':'')))
     list.append(row)
   })
   box.append(list)

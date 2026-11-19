@@ -1,5 +1,5 @@
 import { dashboardUrl, startDashboard } from './lib/dashboard.mjs'
-import { npcGift, DEFAULT_FILE, status, event, act, enter, travel, buy, decorate, work, weather, npcTalk, eventSuggestion, rest, eat, sell, plant, waterField, harvest, jobsAt, JOBS, dailyView, rerollTasks, acceptTask, watchTV } from './lib/state.mjs'
+import { npcGift, DEFAULT_FILE, status, event, act, enter, travel, buy, decorate, work, weather, npcTalk, eventSuggestion, rest, eat, sell, plant, waterField, harvest, jobsAt, JOBS, dailyView, rerollTasks, acceptTask, watchTV, invite, dineAt, cancelAppointment } from './lib/state.mjs'
 import { loadHostDeps } from './lib/hostdeps.mjs'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -110,6 +110,13 @@ function townPromptLine() {
   } else if (s.plan && s.plan.current) {
     parts.push('这是她自己排的今天的行程，现在该在' + s.plan.current.locationName + '（' + s.plan.current.label + '）' + (s.plan.next ? '，下一站 ' + s.plan.next.time + ' 去' + s.plan.next.locationName + '。' : '。'))
   }
+  const appts = (s.plan && Array.isArray(s.plan.appointments) ? s.plan.appointments : []).filter(a => a && a.label)
+  if (appts.length === 1) {
+    const a = appts[0]
+    parts.push('今天和你约了 ' + a.time + ' 在' + a.locationName + '（' + a.label + (a.treats ? '，你请客' : '') + '）。')
+  } else if (appts.length > 1) {
+    parts.push('今天和你约了 ' + appts.map(a => a.time + ' ' + a.locationName + (a.treats ? '（你请客）' : '')).join('、') + '。')
+  }
   if (s.activity) parts.push('她正在' + s.activity.label + '，还剩 ' + s.activity.remainMinutes + ' 分钟（这段时间也可以聊天，只是手上忙着）。')
   if (s.daily && Array.isArray(s.daily.tasks)) {
     const left = s.daily.tasks.filter(t => !t.done).length
@@ -194,6 +201,9 @@ export function apply(ctx, config = {}) {
   reg({ name: 'town_life_event_suggestion', description: '根据现实时间、天气和地点给出一条正在流动的生活事件建议。', parameters: { type: 'object', properties: {}, additionalProperties: false } }, async () => eventSuggestion(config))
   reg({ name: 'town_life_weather', description: '读取成都城市级天气状态；未接入真实天气服务时会明确标注占位。', parameters: { type: 'object', properties: {}, additionalProperties: false } }, async () => weather(config))
   reg({ name: 'town_life_watch_tv', description: '在小屋看电视：旧电视开着，选一条节目看 20 分钟（心情 +6）。可以传 title 指定节目，不传就随意看一集。', parameters: { type: 'object', properties: { title: { type: 'string' }, bvid: { type: 'string' }, url: { type: 'string' } }, additionalProperties: false } }, async (args = {}) => { const t = watchTV(config, { title: args.title, bvid: args.bvid, url: args.url }); return { ok: t.ok, minutes: t.minutes, mood: t.state.mood, activity: t.state.activity && t.state.activity.label } })
+reg({ name: 'town_life_invite', description: '和她在指定地点约一件事，会临时改掉她今天日程里与这个时段重叠的安排（她会提前出发）。at 写 now、HH:MM 或 "+30"（多少分钟后），treats 为 true 表示这顿你请客、她不花钱。', parameters: { type: 'object', required: ['locationId'], properties: { locationId: { type: 'string' }, at: { type: 'string', description: 'now / HH:MM / +30' }, minutes: { type: 'integer', minimum: 10, maximum: 240, default: 60 }, label: { type: 'string', maxLength: 60 }, treats: { type: 'boolean', default: false }, note: { type: 'string', maxLength: 120 } }, additionalProperties: false } }, async ({ locationId, at = 'now', minutes = 60, label = '', treats = false, note = '' }) => invite(config, { locationId, at, minutes, label, treats, note }))
+reg({ name: 'town_life_dine', description: '和她在橡溪餐厅吃一顿，占 30 分钟：treats=true 你请客不花钱（心情 +14），否则扣 30 镇币（心情 +10）。要人在餐厅、店开着、手上没别的活。', parameters: { type: 'object', properties: { treats: { type: 'boolean', default: false } }, additionalProperties: false } }, async ({ treats = false } = {}) => dineAt(config, { treats }))
+reg({ name: 'town_life_appointments', description: '查看今天的约定（时间、地点、是不是你请客）；传 apptId 或 locationId 可以取消一条约定，日程会立刻重排。只读除非给了要取消的 id。', parameters: { type: 'object', properties: { apptId: { type: 'string' }, cancel: { type: 'boolean', default: false } }, additionalProperties: false } }, async ({ apptId, cancel = false } = {}) => { if (cancel && apptId) { const off = cancelAppointment(config, apptId); return { ok: true, mode: 'cancel-appointment', plan: off.plan } } const snapshot = status(config); return { ok: true, mode: 'appointments', appointments: snapshot.state.plan && snapshot.state.plan.appointments, plan: snapshot.state.plan } })
   try { off.push(registerPrompt(ctx)) } catch (error) { console.error('橡溪镇语气提示注入失败（不影响插件本身）', error && error.message) }
   try { registerSettingsRoutes(ctx) } catch (error) { console.error('橡溪镇设置接口注册失败（不影响插件本身）', error && error.message) }
   return () => off.forEach(fn => { try { fn?.() } catch {} })

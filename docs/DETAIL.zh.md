@@ -28,3 +28,11 @@
 状态就是一份 JSON，默认 `~/.dsh/town-life.json`，可以整个拷走。
 
 MIT License.
+
+## 约定与请客（1.10.0）
+
+- `town_life_invite({ locationId, at, minutes, label, treats })`：在 `state.appointments` 里加一条当天约定，`at` 支持 `now` / `HH:MM` / `"+30"`；与它重叠的日常段会被去掉，并在段上写 `leaveMin`（提前到几点出发）。
+- `pilotTick` 会在 `leaveMin` 到点时让她提前出门；如果 `treats` 为真且她到了餐厅，会自动开始一顿 `kind:'meal'` 的请客饭，不扣钱、心情 +14。
+- `town_life_dine({ treats })`：在餐厅坐下吃 30 分钟。`treats=true` 时不扣钱；否则扣 `MEAL_COST = 30` 镇币、心情 +10。
+- `town_life_appointments({ apptId, cancel })`：列出今天的约定，传 `apptId` + `cancel:true` 取消并立刻重排日程。
+- 网页路线面板把约定段标成 ♥ 并注明「你请客」；`/state` 的 `plan.appointments` 里带 `time` / `untilTime`。
